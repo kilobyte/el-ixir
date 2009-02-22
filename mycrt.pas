@@ -8,6 +8,7 @@ procedure delay(ms:integer);
 procedure crtwrite(txt:string);
 function keypressed:boolean;
 function readkey:char;
+procedure waitkey;
 procedure clrscr;
 
 var
@@ -75,6 +76,11 @@ var
 begin
   FpRead(0, r, 1);
   readkey:=r;
+end;
+
+procedure waitkey;
+begin
+  SelectText(input, nil);
 end;
 
 procedure clrscr;

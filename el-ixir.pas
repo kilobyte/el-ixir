@@ -241,6 +241,8 @@ function bylklawisz(wczas:boolean;gr:byte):boolean;
 var
   ch:char;
 begin
+  if not (kon or wczas)
+    then waitkey;
   if keypressed or kon
     then begin
            while keypressed
@@ -386,7 +388,7 @@ begin
     else if sco[1]<sco[2]
            then komunikat(2,'EL-IXIR')
            else komunikat(0,'EL-IXIR');
-  repeat until bylklawisz(false,0);
+  bylklawisz(false,0);
   kon:=true
 end;
 
@@ -998,7 +1000,7 @@ begin
     repeat
       komunikat(1,'Press any key');
       oznaczgracza(1);
-      repeat until bylklawisz(false,0);
+      bylklawisz(false,0);
       czkom;
       ruch(1);
       if kon or (polaw=0) or (sco[1]>98) or (sco[2]>98)
@@ -1008,7 +1010,7 @@ begin
              end;
       komunikat(2,'Press any key');
       oznaczgracza(2);
-      repeat until bylklawisz(false,0);
+      bylklawisz(false,0);
       czkom;
       ruch(2);
     until kon or (polaw=0) or (sco[1]>98) or (sco[2]>98);
