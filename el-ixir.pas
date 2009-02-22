@@ -491,7 +491,7 @@ begin
          end;
 end;
 
-procedure completeembrance(gr:byte);
+procedure completeembrace(gr:byte);
 var
   b:boolean;
   x1,y1:byte;
@@ -569,7 +569,7 @@ begin
                   sprawdz1(x,y+1);
                   sprawdz1(x,y-1)
                 end;
-           komunikat(gr,'Complete Embrance');
+           komunikat(gr,'Complete Embrace');
            em:=true;
            for y:=1 to 14
              do for x:=1 to 14
@@ -586,12 +586,12 @@ begin
                                 else tabl[x,y]:=gr*2-1;
                               anim(x,y,gr)
                             end;
-           przejedzizapal(gr,'Complete Embrance');
+           przejedzizapal(gr,'Complete Embrace');
            czkom
          end;
 end;
 
-procedure anchorembrance(gr:byte);
+procedure anchorembrace(gr:byte);
 var
   b:boolean;
   x1,y1:byte;
@@ -670,7 +670,7 @@ begin
                   sprawdz2(x,y+1);
                   sprawdz2(x,y-1)
                 end;
-           komunikat(gr,'Anchoring Embrance');
+           komunikat(gr,'Anchoring Embrace');
            em:=true;
            for y:=1 to 14
              do for x:=1 to 14
@@ -683,7 +683,7 @@ begin
                               tabl[x,y]:=gr*2;
                               anim(x,y,gr)
                             end;
-           przejedzizapal(gr,'Anchoring Embrance');
+           przejedzizapal(gr,'Anchoring Embrace');
            czkom
          end;
 end;
@@ -767,9 +767,9 @@ begin
   przejedzizapal(gr,'Anchoring Chain');
 emb:
   em:=false;
-  completeembrance(gr);
-  anchorembrance(3-gr);
-  anchorembrance(gr);
+  completeembrace(gr);
+  anchorembrace(3-gr);
+  anchorembrace(gr);
   if em
     then goto emb;
 end;
