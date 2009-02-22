@@ -15,7 +15,7 @@ var
   ScreenWidth,ScreenHeight:integer;
 
 implementation
-uses oldlinux, unix, baseunix;
+uses termio, unix, baseunix;
 
 var
   RealAttr:byte;
