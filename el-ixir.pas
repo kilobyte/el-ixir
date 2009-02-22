@@ -960,7 +960,6 @@ begin
 end;
 
 
-label gameover;
 begin
   rczasu:=1;
   InitMouse;
@@ -1004,10 +1003,7 @@ begin
       czkom;
       ruch(1);
       if kon or (polaw=0) or (sco[1]>98) or (sco[2]>98)
-        then begin
-               kunc;
-               goto gameover
-             end;
+        then break;
       komunikat(2,'Press any key');
       oznaczgracza(2);
       bylklawisz(false,0);
@@ -1015,6 +1011,5 @@ begin
       ruch(2);
     until kon or (polaw=0) or (sco[1]>98) or (sco[2]>98);
     kunc;
-    gameover:
   until false
 end.
