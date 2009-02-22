@@ -741,7 +741,7 @@ begin
              delay(czas1);
            until bylklawisz(true,gr);
            m:=n;
-           n:=random(4);
+           n:=1;
            if rczasu=1
              then begin
                     czas[gr]:=14;
