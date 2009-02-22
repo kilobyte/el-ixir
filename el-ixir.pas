@@ -8,8 +8,8 @@ const
   czas1=550;        { czas na wybór }
   czas2=250;        { czas przy punktacji }
   czas3=400;        { czas przy embransie }
-  czas4=100;         { czas przy zapelnianiu pól 1..4}
-  fanim=5;           { ilość faz animacji }
+  czas4=100;        { czas przy zapelnianiu pól 1..4}
+  fanim=5;          { ilość faz animacji }
   b0=#$70;
   strzalki:array[0..3] of tpole=
             ((' ',b0,'←',b0,' ',b0),
