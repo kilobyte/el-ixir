@@ -23,8 +23,8 @@ const
              (' ',b0,'4',b0,' ',b0));
   pustka:tpole=(' ',#7,' ',#7,' ',#7);
   cz:tpole=(' ',#7,'•',#7,' ',#7);
-  kierx:array[0..3] of shortint=(-1,0,1,0);
-  kiery:array[0..3] of shortint=(0,-1,0,1);
+  kierx:array[0..3] of integer=(-1,0,1,0);
+  kiery:array[0..3] of integer=(0,-1,0,1);
   pc1=5;
   pc2=7;
   col:array[0..8] of byte=($07,$1c,$61,$1a,$20,$35,$40,$5d,7);
@@ -41,14 +41,14 @@ const
 var
   kon:boolean;
   fast:boolean;
-  rczasu:byte;
-  czas:array[1..2] of word;
+  rczasu:integer;
+  czas:array[1..2] of integer;
   c1,c2:char;
   polet1,polet2,poler:tpole;
   polew,polez,polerz:array[1..2] of tpole;
   c1w,c2w:char;
 
-procedure setcolors(c:byte);
+procedure setcolors(c:integer);
 const
   ct1_mono=#$0f;
   ct2_mono=#$07;
@@ -97,11 +97,11 @@ begin
 end;
 
 var
-  sco:array[1..2] of byte;
+  sco:array[1..2] of integer;
   screen:tscreen;
-  tabl,tabl1:array[0..15,0..15] of shortint;
+  tabl,tabl1:array[0..15,0..15] of integer;
   stos:array[1..196] of record x,y:byte end;
-  ws1,ws2:byte;
+  ws1,ws2:integer;
   em:boolean;
 
 procedure delay(ms:integer);
@@ -163,16 +163,16 @@ begin
   ws2:=0
 end;
 
-procedure poloznastos(x,y:byte);
+procedure poloznastos(x,y:integer);
 begin
   inc(ws1);
   stos[ws1].x:=x;
   stos[ws1].y:=y
 end;
 
-procedure wyswczas(gr:byte);
+procedure wyswczas(gr:integer);
 var
-  m,n:byte;
+  m,n:integer;
   txt:string[20];
 begin
   case rczasu of
@@ -199,7 +199,7 @@ begin
   end;
 end;
 
-procedure poprczas(gr:byte);
+procedure poprczas(gr:integer);
 var
   txt:string[20];
 begin
@@ -221,9 +221,9 @@ begin
   end;
 end;
 
-procedure czyscczas(gr:byte);
+procedure czyscczas(gr:integer);
 var
-  m,n:byte;
+  m,n:integer;
 begin
   case rczasu of
     1:begin
@@ -237,7 +237,7 @@ begin
    end;
 end;
 
-function bylklawisz(wczas:boolean;gr:byte):boolean;
+function bylklawisz(wczas:boolean;gr:integer):boolean;
 var
   ch:char;
 begin
@@ -261,7 +261,7 @@ begin
            else if wczas and (rczasu>0)
                   then begin
                          dec(czas[gr]);
-                         if czas[gr]=65535
+                         if czas[gr]<0
                            then begin
                                   czas[gr]:=0;
                                   bylklawisz:=true
@@ -274,12 +274,12 @@ begin
                   else bylklawisz:=false
 end;
 
-procedure pisznapolu(x,y:byte;co:tpole);
+procedure pisznapolu(x,y:integer;co:tpole);
 begin
   draw(SX2-23+3*x,4+y,co);
 end;
 
-procedure czyscpole(x,y:byte);
+procedure czyscpole(x,y:integer);
 begin
   if ((x=1) or (x=14)) and ((y=1) or (y=14))
     then pisznapolu(x,y,poler)
@@ -288,7 +288,7 @@ begin
            else pisznapolu(x,y,polet2)
 end;
 
-procedure zapelnpole(x,y,gr:byte);
+procedure zapelnpole(x,y,gr:integer);
 begin
   if ((x=1) or (x=14)) and ((y=1) or (y=14))
     then pisznapolu(x,y,polerz[gr])
@@ -297,20 +297,20 @@ end;
 
 var
   x,y:integer;
-  dl,m,n,ilp:byte;
-  polaw:byte;
-  pola:array[1..4] of record x,y:byte end;
-  an:array[1..2] of byte;
+  dl,m,n,ilp:integer;
+  polaw:integer;
+  pola:array[1..4] of record x,y:integer end;
+  an:array[1..2] of integer;
 
-procedure anim(x,y,gr:byte);
+procedure anim(x,y,gr:integer);
 var
-  x0,y0,x1,y1:byte;
-  xc,yc:byte;
-  n,i:byte;
+  x0,y0,x1,y1:integer;
+  xc,yc:integer;
+  n,i:integer;
   tmp:tpole;
-  ilr:byte;
+  ilr:integer;
 const
-  rogi:array[1..4,1..2] of byte=((1,1),(14,1),(14,14),(1,14));
+  rogi:array[1..4,1..2] of integer=((1,1),(14,1),(14,14),(1,14));
 begin
   ilr:=0;
   for n:=1 to 4
@@ -363,7 +363,7 @@ begin
   jednakowe:=true
 end;
 
-procedure komunikat(gr:byte;str:string);
+procedure komunikat(gr:integer;str:string);
 begin
   gotoxy(SX2-1-length(str) div 2,SY-4);
   if gr=1
@@ -392,7 +392,7 @@ begin
   kon:=true
 end;
 
-procedure oznaczgracza(gr:byte);
+procedure oznaczgracza(gr:integer);
 var
   x:integer;
 begin
@@ -412,10 +412,10 @@ begin
   draw(x+2,7,pustka);
 end;
 
-procedure score(gr:byte);
+procedure score(gr:integer);
 var
   x:integer;
-  n:byte;
+  n:integer;
 begin
   if gr=1
     then textattr:=byte(c1)
@@ -445,8 +445,8 @@ begin
   outtext(char(ord('0')+sco[gr] mod 10))
 end;
 
-procedure przejedzizapal(gr:byte;kom:string);
-  procedure sprawdz(x,y:byte);
+procedure przejedzizapal(gr:integer;kom:string);
+  procedure sprawdz(x,y:integer);
   begin
     if tabl1[x,y]=gr*2-1
       then begin
@@ -491,11 +491,11 @@ begin
          end;
 end;
 
-procedure completeembrace(gr:byte);
+procedure completeembrace(gr:integer);
 var
   b:boolean;
-  x1,y1:byte;
-  procedure sprawdz(x,y:byte);
+  x1,y1:integer;
+  procedure sprawdz(x,y:integer);
   begin
     if tabl1[x,y]=0
       then begin
@@ -503,7 +503,7 @@ var
              tabl1[x,y]:=-1
            end
   end;
-  procedure sprawdz1(x,y:byte);
+  procedure sprawdz1(x,y:integer);
   begin
     if tabl1[x,y]=0
       then begin
@@ -591,11 +591,11 @@ begin
          end;
 end;
 
-procedure anchorembrace(gr:byte);
+procedure anchorembrace(gr:integer);
 var
   b:boolean;
-  x1,y1:byte;
-  procedure sprawdz(x,y:byte);
+  x1,y1:integer;
+  procedure sprawdz(x,y:integer);
   begin
     if tabl1[x,y]=-3
       then begin
@@ -603,7 +603,7 @@ var
              tabl1[x,y]:=-1
            end
   end;
-  procedure sprawdz1(x,y:byte);
+  procedure sprawdz1(x,y:integer);
   begin
     if tabl[x,y]=(3-gr)*2
       then begin
@@ -611,7 +611,7 @@ var
              tabl1[x,y]:=-1
            end
   end;
-  procedure sprawdz2(x,y:byte);
+  procedure sprawdz2(x,y:integer);
   begin
     if tabl1[x,y]=-3
       then begin
@@ -688,7 +688,7 @@ begin
          end;
 end;
 
-procedure ruch(gr:byte);
+procedure ruch(gr:integer);
 label emb;
 begin
   if polaw<4
@@ -784,11 +784,11 @@ end;
 
 procedure menu;
 var
-  m,n:byte;
+  m,n:integer;
   ch:char;
   play:boolean;
   sel:boolean;
-  gr:byte;
+  gr:integer;
 const
   min=2;
   wybory:array[min..24] of string[15]=(
