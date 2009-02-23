@@ -1,8 +1,12 @@
 el-ixir: *.pas
-	fpc el-ixir.pas
+	fpc -XX el-ixir.pas
 
 clean:
 	rm -f *.gpi *.o *.ppu el-ixir
+
+install: el-ixir
+	mkdir -p "$$DESTDIR/usr/games"
+	install -c el-ixir "$$DESTDIR/usr/games/"
 
 dist:
 	rm -rf tmp
