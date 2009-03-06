@@ -34,9 +34,6 @@ const
   czy=3;
   cy=10;
   cx1=3;
-  cx2=72;
-  cx3=cx1+2;
-  cx4=cx2+2;
   py=4;
 var
   kon:boolean;
@@ -188,11 +185,11 @@ begin
        textattr:=7;
        if gr=1
          then gotoxy(cx1+1,cy)
-         else gotoxy(cx2+1,cy);
+         else gotoxy(SX-cx1-5+1,cy);
        outtext('Time:');
        if gr=1
-         then gotoxy(cx3,cy+2)
-         else gotoxy(cx4,cy+2);
+         then gotoxy(cx1+2,     cy+2)
+         else gotoxy(SX-cx1-5+2,cy+2);
        str(czas[gr]:3, txt);
        outtext(txt)
      end;
@@ -213,8 +210,8 @@ begin
    2:begin
        textattr:=7;
        if gr=1
-         then gotoxy(cx3,cy+2)
-         else gotoxy(cx4,cy+2);
+         then gotoxy(cx1+2,     cy+2)
+         else gotoxy(SX-cx1-5+2,cy+2);
        str(czas[gr]:3, txt);
        outtext(txt)
     end;
