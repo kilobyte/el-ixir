@@ -833,6 +833,10 @@ begin
            gotoxy(SX2+2-length(wybory[m]) div 2,m);
            outtext(wybory[m])
          end;
+    if rczasu=0
+      then gotoxy(SX2+11,18)
+      else gotoxy(SX2+11,rczasu+15);
+    outtext('√');
     gotoxy(22,12);
     textattr:=byte(c1);
     if sel and (gr=1)
