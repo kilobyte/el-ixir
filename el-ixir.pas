@@ -962,7 +962,7 @@ end;
 
 
 begin
-  rczasu:=1;
+  rczasu:=0;
   InitMouse;
   setsize;
   c1:=char(col[pc1]);
