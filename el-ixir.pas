@@ -773,7 +773,7 @@ end;
 
 procedure fajrant;
 begin
-  clrscr;
+  write(#27'[0m'#27'[2J'#27'[0;0f');
   cursorin;
   DoneMouse;
   halt
