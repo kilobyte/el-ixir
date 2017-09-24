@@ -805,7 +805,7 @@ const
                        'TIME:',
                        'For one move',
                        'For all game',
-                       'No time',
+                       'No limit',
                        '',
                        'Black&White',
                        'Standard colors',
