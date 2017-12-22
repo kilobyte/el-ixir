@@ -45,7 +45,7 @@ var
   polew,polez,polerz:array[1..2] of tpole;
   c1w,c2w:char;
 
-procedure setcolors(c:integer);
+procedure setcolors;
 const
   ct1_mono=#$0f;
   ct2_mono=#$07;
@@ -63,23 +63,6 @@ const
     t[5]:=a3;
   end;
 begin
-  case c of
-    0:begin
-        c1:=#$07;
-        c1w:=#$07;
-        c2:=#$70;
-        c2w:=#$70;
-        p(polet1,'▒',#$07,'▒',#$07,'▒',#$07);
-        polet2:=polet2_mono;
-        p(poler,    ' ',#$70,'Θ',#$7f,' ',#$70);
-        p(polew[1], ' ',c1w, '∙',c1w, ' ',c1w);
-        p(polez[1], ' ',c1,  '•',c1,  ' ',c1);
-        p(polerz[1],' ',c1,  'Ω',c1,  ' ',c1);
-        p(polew[2], ' ',c2w, '∙',c2w, ' ',c2w);
-        p(polez[2], ' ',c2,  '•',c2,  ' ',c2);
-        p(polerz[2],' ',c2,  'Ω',c2,  ' ',c2)
-      end;
-    1:begin
         polet1:=polet1_mono;
         polet2:=polet2_mono;
         poler:=poler_mono;
@@ -89,8 +72,6 @@ begin
         p(polew[2], ' ',c2w,'•',c2w,' ',c2w);
         p(polez[2], ' ',c2, '•',c2, ' ',c2);
         p(polerz[2],' ',c2, 'Ω',c2, ' ',c2)
-      end
-   end;
 end;
 
 var
@@ -807,14 +788,14 @@ const
                        'For all game',
                        'No limit',
                        '',
-                       'Black&White',
+                       '',
                        'Standard colors',
                        '',
                        'Play game',
                        'Exit to DOS');
   opcje:array[boolean] of set of byte=
-                 ([12,13,16,17,18,20,21,23,24],
-                  [2,3,4,5,6,7,8,9,12,13,20,21,24]);
+                 ([12,13,16,17,18,21,23,24],
+                  [2,3,4,5,6,7,8,9,12,13,21,24]);
 begin
   n:=23;
   sel:=false;
@@ -909,11 +890,7 @@ begin
           c2:=char(col[pc2]);
           c1w:=char(colw[pc1]);
           c2w:=char(colw[pc2]);
-          setcolors(1);
-          sel:=false
-        end;
-     20:begin
-          setcolors(0);
+          setcolors;
           sel:=false
         end;
      18:rczasu:=0;
@@ -935,12 +912,10 @@ begin
                       then begin
                              c1:=char(col[n-2]);
                              n:=13;
-                             setcolors(2)
                            end
                       else begin
                              c2:=char(col[n-2]);
                              n:=12;
-                             setcolors(2)
                            end
                   end;
     end;
@@ -969,7 +944,7 @@ begin
   c2:=char(col[pc2]);
   c1w:=char(colw[pc1]);
   c2w:=char(colw[pc2]);
-  setcolors(1);
+  setcolors;
   repeat
     menu;
     czas[1]:=400;
