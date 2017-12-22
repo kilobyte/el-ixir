@@ -25,7 +25,7 @@ const
   cz:tpole=(' ',#7,'•',#7,' ',#7);
   kierx:array[0..3] of integer=(-1,0,1,0);
   kiery:array[0..3] of integer=(0,-1,0,1);
-  pc1=5;
+  pc1=3;
   pc2=7;
   col:array[0..8] of byte=($07,$1c,$61,$1a,$20,$35,$40,$5d,7);
   colw:array[0..8] of byte=($08,$18,$60,$12,$28,$34,$4d,$5c,8);
