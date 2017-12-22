@@ -764,7 +764,6 @@ procedure menu;
 var
   m,n:integer;
   ch:char;
-  play:boolean;
 const
   min=2;
   wybory:array[min..24] of string[15]=(
@@ -807,7 +806,6 @@ begin
       then gotoxy(SX2+11,18)
       else gotoxy(SX2+11,rczasu+15);
     outtext('√');
-    play:=false;
     repeat
       gotoxy(SX2-5,n);
       textattr:=$70;
@@ -863,12 +861,12 @@ begin
     clrscr;
     case n of
      24:fajrant;
-     23:play:=true;
+     23:break;
      18:rczasu:=0;
      17:rczasu:=2;
      16:rczasu:=1;
     end;
-  until play
+  until false
 end;
 
 
