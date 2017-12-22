@@ -911,12 +911,15 @@ begin
                     if gr=1
                       then begin
                              c1:=char(col[n-2]);
+                             c1w:=char(colw[n-2]);
                              n:=13;
                            end
                       else begin
                              c2:=char(col[n-2]);
+                             c2w:=char(colw[n-2]);
                              n:=12;
-                           end
+                           end;
+                    setcolors;
                   end;
     end;
   until play
