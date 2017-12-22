@@ -765,8 +765,6 @@ var
   m,n:integer;
   ch:char;
   play:boolean;
-  sel:boolean;
-  gr:integer;
 const
   min=2;
   wybory:array[min..24] of string[15]=(
@@ -780,8 +778,8 @@ const
                        ' EL-IXIR ',
                        ' EL-IXIR ',
                        '',
-                       'Player 1',
-                       'Player 2',
+                       '',
+                       '',
                        '',
                        'TIME:',
                        'For one move',
@@ -789,16 +787,13 @@ const
                        'No limit',
                        '',
                        '',
-                       'Standard colors',
+                       '',
                        '',
                        'Play game',
                        'Exit to DOS');
-  opcje:array[boolean] of set of byte=
-                 ([12,13,16,17,18,21,23,24],
-                  [2,3,4,5,6,7,8,9,12,13,21,24]);
+  opcje:set of byte=[16,17,18,23,24];
 begin
   n:=23;
-  sel:=false;
   repeat
     textattr:=7;
     clrscr;
@@ -808,26 +803,10 @@ begin
            gotoxy(SX2+2-length(wybory[m]) div 2,m);
            outtext(wybory[m])
          end;
-    for m:=2 to 10
-      do begin
-           textattr:=col[m-2];
-           gotoxy(SX2+2-length(wybory[m]) div 2,m);
-           outtext(wybory[m])
-         end;
     if rczasu=0
       then gotoxy(SX2+11,18)
       else gotoxy(SX2+11,rczasu+15);
     outtext('√');
-    gotoxy(22,12);
-    textattr:=byte(c1);
-    if sel and (gr=1)
-      then outtext(' ??????? ')
-      else outtext(' EL-IXIR ');
-    gotoxy(SX-26,13);
-    textattr:=byte(c2);
-    if sel and (gr=2)
-      then outtext(' ??????? ')
-      else outtext(' EL-IXIR ');
     play:=false;
     repeat
       gotoxy(SX2-5,n);
@@ -851,12 +830,12 @@ begin
                      if n>min
                        then dec(n)
                        else n:=24;
-                   until n in opcje[sel];
+                   until n in opcje;
                #80:repeat
                      if n<24
                        then inc(n)
                        else n:=min
-                   until n in opcje[sel];
+                   until n in opcje;
               end;
            end;
         #27:begin
@@ -867,12 +846,12 @@ begin
                             if n>min
                               then dec(n)
                               else n:=24;
-                          until n in opcje[sel];
+                          until n in opcje;
                       'B':repeat
                             if n<24
                               then inc(n)
                               else n:=min
-                          until n in opcje[sel];
+                          until n in opcje;
                     end;
                 #27:fajrant;
               end;
@@ -885,42 +864,9 @@ begin
     case n of
      24:fajrant;
      23:play:=true;
-     21:begin
-          c1:=char(col[pc1]);
-          c2:=char(col[pc2]);
-          c1w:=char(colw[pc1]);
-          c2w:=char(colw[pc2]);
-          setcolors;
-          sel:=false
-        end;
      18:rczasu:=0;
      17:rczasu:=2;
      16:rczasu:=1;
-     13:begin
-          sel:=true;
-          gr:=2
-        end;
-     12:begin
-          sel:=true;
-          gr:=1
-        end;
-     2..10:if ((gr=1) and (c2<>char(col[n-2]))) or
-              ((gr=2) and (c1<>char(col[n-2])))
-             then begin
-                    sel:=false;
-                    if gr=1
-                      then begin
-                             c1:=char(col[n-2]);
-                             c1w:=char(colw[n-2]);
-                             n:=13;
-                           end
-                      else begin
-                             c2:=char(col[n-2]);
-                             c2w:=char(colw[n-2]);
-                             n:=12;
-                           end;
-                    setcolors;
-                  end;
     end;
   until play
 end;
