@@ -5,11 +5,11 @@ type
 var
   SX,SY,SX2:integer;
 const
-  czas1=550;        { czas na wybór }
-  czas2=250;        { czas przy punktacji }
-  czas3=400;        { czas przy embransie }
-  czas4=100;        { czas przy zapelnianiu pól 1..4}
-  fanim=5;          { ilość faz animacji }
+  czas1=550;        { delay when cycling between options }
+  czas2=250;        { score increment delay }
+  czas3=400;        { embrace delay }
+  czas4=100;        { delay when placing parts of a stone }
+  fanim=5;          { # of animation phases }
   b0=#$70;
   strzalki:array[0..3] of tpole=
             ((' ',b0,'←',b0,' ',b0),
