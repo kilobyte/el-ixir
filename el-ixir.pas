@@ -25,54 +25,34 @@ const
   cz:tpole=(' ',#7,'•',#7,' ',#7);
   kierx:array[0..3] of integer=(-1,0,1,0);
   kiery:array[0..3] of integer=(0,-1,0,1);
-  pc1=3;
-  pc2=7;
-  col:array[0..8] of byte=($07,$1c,$61,$1a,$20,$35,$40,$5d,7);
-  colw:array[0..8] of byte=($08,$18,$60,$12,$28,$34,$4d,$5c,8);
   gcz=3;
   czx=14;
   czy=3;
   cy=10;
   cx1=3;
   py=4;
+  ct1=#$0f;
+  ct2=#$07;
+  ct0=#$70;
+  c1= #$1a;
+  c1w=#$12;
+  c2= #$5d;
+  c2w=#$5c;
+  polet1:tpole=('▒',ct1,'▒',ct1,'▒',ct1);
+  polet2:tpole=('▓',ct2,'▓',ct2,'▓',ct2);
+  poler:tpole=(' ',ct0,'Θ',ct0,' ',ct0);
+  polew:array[1..2] of tpole=
+    ((' ',c1w,'•',c1w,' ',c1w), (' ',c2w,'•',c2w,' ',c2w));
+  polez:array[1..2] of tpole=
+    ((' ',c1 ,'•',c1 ,' ',c1 ), (' ',c2 ,'•',c2 ,' ',c2 ));
+  polerz:array[1..2] of tpole=
+    ((' ',c1 ,'Ω',c1 ,' ',c1 ), (' ',c2 ,'Ω',c2 ,' ',c2 ));
+  col:array[1..2] of byte=(ord(c1),ord(c2));
 var
   kon:boolean;
   fast:boolean;
   rczasu:integer;
   czas:array[1..2] of integer;
-  c1,c2:char;
-  polet1,polet2,poler:tpole;
-  polew,polez,polerz:array[1..2] of tpole;
-  c1w,c2w:char;
-
-procedure setcolors;
-const
-  ct1_mono=#$0f;
-  ct2_mono=#$07;
-  ct0_mono=#$70;
-  polet1_mono:tpole=('▒',ct1_mono,'▒',ct1_mono,'▒',ct1_mono);
-  polet2_mono:tpole=('▓',ct2_mono,'▓',ct2_mono,'▓',ct2_mono);
-  poler_mono:tpole=(' ',ct0_mono,'Θ',ct0_mono,' ',ct0_mono);
-  procedure p(var t:tpole;s1,a1,s2,a2,s3,a3:string);
-  begin
-    t[0]:=s1;
-    t[1]:=a1;
-    t[2]:=s2;
-    t[3]:=a2;
-    t[4]:=s3;
-    t[5]:=a3;
-  end;
-begin
-        polet1:=polet1_mono;
-        polet2:=polet2_mono;
-        poler:=poler_mono;
-        p(polew[1], ' ',c1w,'•',c1w,' ',c1w);
-        p(polez[1], ' ',c1, '•',c1, ' ',c1);
-        p(polerz[1],' ',c1, 'Ω',c1, ' ',c1);
-        p(polew[2], ' ',c2w,'•',c2w,' ',c2w);
-        p(polez[2], ' ',c2, '•',c2, ' ',c2);
-        p(polerz[2],' ',c2, 'Ω',c2, ' ',c2)
-end;
 
 var
   sco:array[1..2] of integer;
@@ -887,11 +867,6 @@ begin
   rczasu:=0;
   InitMouse;
   setsize;
-  c1:=char(col[pc1]);
-  c2:=char(col[pc2]);
-  c1w:=char(colw[pc1]);
-  c2w:=char(colw[pc2]);
-  setcolors;
   repeat
     menu;
     czas[1]:=400;
