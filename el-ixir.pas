@@ -1,65 +1,61 @@
 uses mycrt,Mouse;{$R+}
 type
-  tpole=array[0..5] of string;
+  tsquare=array[0..5] of string;
   tscreen=array of array of array[0..1] of string;
 var
   SX,SY,SX2:integer;
 const
-  czas1=550;        { delay when cycling between options }
-  czas2=250;        { score increment delay }
-  czas3=400;        { embrace delay }
-  czas4=100;        { delay when placing parts of a stone }
+  delay1=550;       { delay when cycling between options }
+  delay2=250;       { score increment delay }
+  delay3=400;       { embrace delay }
+  delay4=100;       { delay when placing parts of a stone }
   fanim=5;          { # of animation phases }
   b0=#$70;
-  strzalki:array[0..3] of tpole=
+  arrows:array[0..3] of tsquare=
             ((' ',b0,'←',b0,' ',b0),
              (' ',b0,'↑',b0,' ',b0),
              (' ',b0,'→',b0,' ',b0),
              (' ',b0,'↓',b0,' ',b0));
-  cyfry:array[0..3] of tpole=
+  digits:array[0..3] of tsquare=
             ((' ',b0,'1',b0,' ',b0),
              (' ',b0,'2',b0,' ',b0),
              (' ',b0,'3',b0,' ',b0),
              (' ',b0,'4',b0,' ',b0));
-  pustka:tpole=(' ',#7,' ',#7,' ',#7);
-  cz:tpole=(' ',#7,'•',#7,' ',#7);
-  kierx:array[0..3] of integer=(-1,0,1,0);
-  kiery:array[0..3] of integer=(0,-1,0,1);
-  gcz=3;
-  czx=14;
-  czy=3;
-  cy=10;
-  cx1=3;
+  empty:tsquare=(' ',#7,' ',#7,' ',#7);
+  timem:tsquare=(' ',#7,'•',#7,' ',#7);
+  dirx:array[0..3] of integer=(-1,0,1,0);
+  diry:array[0..3] of integer=(0,-1,0,1);
+  wtl=3;            { width of time indicator }
+  tlmx=14; tlmy=3;  { pos of time limit indicator, per move }
+  tlgx1=3; tlgy=10; { pos of time limit indicator, per game }
   py=4;
-  ct1=#$0f;
-  ct2=#$07;
+  cb1=#$0f;
+  cb2=#$07;
   ct0=#$70;
   c1= #$1a;
-  c1w=#$12;
+  c1s=#$12;
   c2= #$5d;
-  c2w=#$5c;
-  polet1:tpole=('▒',ct1,'▒',ct1,'▒',ct1);
-  polet2:tpole=('▓',ct2,'▓',ct2,'▓',ct2);
-  poler:tpole=(' ',ct0,'Θ',ct0,' ',ct0);
-  polew:array[1..2] of tpole=
-    ((' ',c1w,'•',c1w,' ',c1w), (' ',c2w,'•',c2w,' ',c2w));
-  polez:array[1..2] of tpole=
+  c2s=#$5c;
+  sqb1:tsquare=('▒',cb1,'▒',cb1,'▒',cb1);
+  sqb2:tsquare=('▓',cb2,'▓',cb2,'▓',cb2);
+  sqc:tsquare=(' ',ct0,'Θ',ct0,' ',ct0);
+  sqs:array[1..2] of tsquare=
+    ((' ',c1s,'•',c1s,' ',c1s), (' ',c2s,'•',c2s,' ',c2s));
+  sqf:array[1..2] of tsquare=
     ((' ',c1 ,'•',c1 ,' ',c1 ), (' ',c2 ,'•',c2 ,' ',c2 ));
-  polerz:array[1..2] of tpole=
+  sqcf:array[1..2] of tsquare=
     ((' ',c1 ,'Ω',c1 ,' ',c1 ), (' ',c2 ,'Ω',c2 ,' ',c2 ));
   col:array[1..2] of byte=(ord(c1),ord(c2));
 var
-  kon:boolean;
+  quitting:boolean;
   fast:boolean;
-  rczasu:integer;
-  czas:array[1..2] of integer;
-
-var
+  tl_kind:integer;
+  tlimit:array[1..2] of integer;
   sco:array[1..2] of integer;
   screen:tscreen;
-  tabl,tabl1:array[0..15,0..15] of integer;
-  stos:array[1..196] of record x,y:byte end;
-  ws1,ws2:integer;
+  board,board1:array[0..15,0..15] of integer;
+  stack:array[1..196] of record x,y:byte end;
+  sp1,sp2:integer;
   em:boolean;
 
 procedure delay(ms:integer);
@@ -94,7 +90,7 @@ begin
   crtwrite(txt);
 end;
 
-procedure draw(x,y:integer;p:tpole);
+procedure draw(x,y:integer;p:tsquare);
   procedure c(s:string);
   begin
     if s=''
@@ -115,181 +111,181 @@ begin
   crtwrite(p[4]);
 end;
 
-procedure czyscstos;
+procedure clearstack;
 begin
-  ws1:=0;
-  ws2:=0
+  sp1:=0;
+  sp2:=0
 end;
 
-procedure poloznastos(x,y:integer);
+procedure pushstack(x,y:integer);
 begin
-  inc(ws1);
-  stos[ws1].x:=x;
-  stos[ws1].y:=y
+  inc(sp1);
+  stack[sp1].x:=x;
+  stack[sp1].y:=y
 end;
 
-procedure wyswczas(gr:integer);
+procedure showtime(pl:integer);
 var
   m,n:integer;
   txt:string[20];
 begin
-  case rczasu of
+  case tl_kind of
    1:begin
        textattr:=$70;
-       if gr=1
-         then m:=czx
-         else m:=SX-czx-gcz*14;
+       if pl=1
+         then m:=tlmx
+         else m:=SX-tlmx-wtl*14;
        for n:=1 to 14
-         do draw(m-gcz+n*gcz,czy,cz)
+         do draw(m-wtl+n*wtl,tlmy,timem)
      end;
    2:begin
        textattr:=7;
-       if gr=1
-         then gotoxy(cx1+1,cy)
-         else gotoxy(SX-cx1-5+1,cy);
+       if pl=1
+         then gotoxy(tlgx1+1,tlgy)
+         else gotoxy(SX-tlgx1-5+1,tlgy);
        outtext('Time:');
-       if gr=1
-         then gotoxy(cx1+2,     cy+2)
-         else gotoxy(SX-cx1-5+2,cy+2);
-       str(czas[gr]:3, txt);
+       if pl=1
+         then gotoxy(tlgx1+2,     tlgy+2)
+         else gotoxy(SX-tlgx1-5+2,tlgy+2);
+       str(tlimit[pl]:3, txt);
        outtext(txt)
      end;
   end;
 end;
 
-procedure poprczas(gr:integer);
+procedure showdectime(pl:integer);
 var
   txt:string[20];
 begin
-  case rczasu of
+  case tl_kind of
    1:begin
        textattr:=$70;
-       if gr=1
-         then draw(czx+czas[gr]*gcz,czy,pustka)
-         else draw(SX-czx-gcz-czas[gr]*gcz,czy,pustka)
+       if pl=1
+         then draw(tlmx+tlimit[pl]*wtl,tlmy,empty)
+         else draw(SX-tlmx-wtl-tlimit[pl]*wtl,tlmy,empty)
      end;
    2:begin
        textattr:=7;
-       if gr=1
-         then gotoxy(cx1+2,     cy+2)
-         else gotoxy(SX-cx1-5+2,cy+2);
-       str(czas[gr]:3, txt);
+       if pl=1
+         then gotoxy(tlgx1+2,     tlgy+2)
+         else gotoxy(SX-tlgx1-5+2,tlgy+2);
+       str(tlimit[pl]:3, txt);
        outtext(txt)
     end;
   end;
 end;
 
-procedure czyscczas(gr:integer);
+procedure cleartime(pl:integer);
 var
   m,n:integer;
 begin
-  case rczasu of
+  case tl_kind of
     1:begin
         textattr:=$70;
-        if gr=1
-          then m:=czx
-          else m:=SX-czx-gcz*14;
+        if pl=1
+          then m:=tlmx
+          else m:=SX-tlmx-wtl*14;
         for n:=1 to 14
-          do draw(m-gcz+n*gcz,czy,pustka)
+          do draw(m-wtl+n*wtl,tlmy,empty)
       end;
    end;
 end;
 
-function bylklawisz(wczas:boolean;gr:integer):boolean;
+function waskey(timed:boolean;pl:integer):boolean;
 var
   ch:char;
 begin
-  if not (kon or wczas)
+  if not (quitting or timed)
     then waitkey;
-  if keypressed or kon
+  if keypressed or quitting
     then begin
            while keypressed
              do ch:=readkey;
            if ch='q'
              then begin
-                    kon:=true;
+                    quitting:=true;
                     fast:=true
                   end;
            if ch=#9
              then fast:=true;
-           bylklawisz:=true
+           waskey:=true
          end
     else if (GetMouseButtons and 1)<>0
-           then bylklawisz:=true
-           else if wczas and (rczasu>0)
+           then waskey:=true
+           else if timed and (tl_kind>0)
                   then begin
-                         dec(czas[gr]);
-                         if czas[gr]<0
+                         dec(tlimit[pl]);
+                         if tlimit[pl]<0
                            then begin
-                                  czas[gr]:=0;
-                                  bylklawisz:=true
+                                  tlimit[pl]:=0;
+                                  waskey:=true
                                 end
                            else begin
-                                  poprczas(gr);
-                                  bylklawisz:=false
+                                  showdectime(pl);
+                                  waskey:=false
                                 end
                        end
-                  else bylklawisz:=false
+                  else waskey:=false
 end;
 
-procedure pisznapolu(x,y:integer;co:tpole);
+procedure drawsquare(x,y:integer;w:tsquare);
 begin
-  draw(SX2-23+3*x,4+y,co);
+  draw(SX2-23+3*x,4+y,w);
 end;
 
-procedure czyscpole(x,y:integer);
+procedure clearsquare(x,y:integer);
 begin
   if ((x=1) or (x=14)) and ((y=1) or (y=14))
-    then pisznapolu(x,y,poler)
+    then drawsquare(x,y,sqc)
     else if odd(x+y)
-           then pisznapolu(x,y,polet1)
-           else pisznapolu(x,y,polet2)
+           then drawsquare(x,y,sqb1)
+           else drawsquare(x,y,sqb2)
 end;
 
-procedure zapelnpole(x,y,gr:integer);
+procedure fillsquare(x,y,pl:integer);
 begin
   if ((x=1) or (x=14)) and ((y=1) or (y=14))
-    then pisznapolu(x,y,polerz[gr])
-    else pisznapolu(x,y,polez[gr])
+    then drawsquare(x,y,sqcf[pl])
+    else drawsquare(x,y,sqf[pl])
 end;
 
 var
   x,y:integer;
-  dl,m,n,ilp:integer;
-  polaw:integer;
-  pola:array[1..4] of record x,y:integer end;
+  len,m,n,numsel:integer;
+  freesq:integer;
+  selsq:array[1..4] of record x,y:integer end;
   an:array[1..2] of integer;
 
-procedure anim(x,y,gr:integer);
+procedure anim(x,y,pl:integer);
 var
   x0,y0,x1,y1:integer;
   xc,yc:integer;
   n,i:integer;
-  tmp:tpole;
-  ilr:integer;
+  tmp:tsquare;
+  numc:integer;
 const
-  rogi:array[1..4,1..2] of integer=((1,1),(14,1),(14,14),(1,14));
+  corners:array[1..4,1..2] of integer=((1,1),(14,1),(14,14),(1,14));
 begin
-  ilr:=0;
+  numc:=0;
   for n:=1 to 4
-    do if tabl[rogi[n,1],rogi[n,2]]=gr*2
-         then inc(ilr);
-  if ilr=0
+    do if board[corners[n,1],corners[n,2]]=pl*2
+         then inc(numc);
+  if numc=0
     then begin
-           zapelnpole(x,y,gr);
-           delay(czas3);
+           fillsquare(x,y,pl);
+           delay(delay3);
            exit
          end;
-  an[gr]:=an[gr] mod ilr+1;
-  ilr:=0;
+  an[pl]:=an[pl] mod numc+1;
+  numc:=0;
   for n:=1 to 4
-    do if tabl[rogi[n,1],rogi[n,2]]=gr*2
+    do if board[corners[n,1],corners[n,2]]=pl*2
          then begin
-                inc(ilr);
-                if ilr=an[gr]
+                inc(numc);
+                if numc=an[pl]
                   then begin
-                         x0:=rogi[n,1];
-                         y0:=rogi[n,2]
+                         x0:=corners[n,1];
+                         y0:=corners[n,2]
                        end
               end;
   y1:=py+y;
@@ -302,211 +298,211 @@ begin
          yc:=y0+longint((y1-y0))*n div fanim;
          for i:=0 to 5
            do tmp[i]:=screen[yc,xc+(i div 2),i mod 2];
-         draw(xc,yc,polez[gr]);
-         delay(czas3 div (fanim+1));
+         draw(xc,yc,sqf[pl]);
+         delay(delay3 div (fanim+1));
          draw(xc,yc,tmp);
        end;
-  zapelnpole(x,y,gr)
+  fillsquare(x,y,pl)
 end;
 
-function jednakowe:boolean;
+function boardsame:boolean;
 begin
   for x:=1 to 14
     do for y:=1 to 14
-         do if tabl[x,y]<>tabl1[x,y]
+         do if board[x,y]<>board1[x,y]
               then begin
-                     jednakowe:=false;
+                     boardsame:=false;
                      exit
                    end;
-  jednakowe:=true
+  boardsame:=true
 end;
 
-procedure komunikat(gr:integer;str:string);
+procedure message(pl:integer;str:string);
 begin
   gotoxy(SX2-1-length(str) div 2,SY-4);
-  if gr=1
+  if pl=1
     then textattr:=byte(c1)
-    else if gr=2
+    else if pl=2
            then textattr:=byte(c2)
            else textattr:=byte(b0);
   outtext(' '+str+' ')
 end;
 
-procedure czkom;
+procedure clearmessage;
 begin
   textattr:=7;
   gotoxy(SX2-10,SY-4);
   outtext('                    ')
 end;
 
-procedure kunc;
+procedure showwinner;
 begin
   if sco[1]>sco[2]
-    then komunikat(1,'EL-IXIR')
+    then message(1,'EL-IXIR')
     else if sco[1]<sco[2]
-           then komunikat(2,'EL-IXIR')
-           else komunikat(0,'EL-IXIR');
-  bylklawisz(false,0);
-  kon:=true
+           then message(2,'EL-IXIR')
+           else message(0,'EL-IXIR');
+  waskey(false,0);
+  quitting:=true
 end;
 
-procedure oznaczgracza(gr:integer);
+procedure markplayer(pl:integer);
 var
   x:integer;
 begin
-  if gr=1
+  if pl=1
     then x:=2
     else x:=SX-7;
-  draw(x,6,polez[gr]);
-  draw(x+2,6,polez[gr]);
-  draw(x,7,polez[gr]);
-  draw(x+2,7,polez[gr]);
-  if gr=1
+  draw(x,6,sqf[pl]);
+  draw(x+2,6,sqf[pl]);
+  draw(x,7,sqf[pl]);
+  draw(x+2,7,sqf[pl]);
+  if pl=1
     then x:=SX-7
     else x:=2;
-  draw(x,6,pustka);
-  draw(x+2,6,pustka);
-  draw(x,7,pustka);
-  draw(x+2,7,pustka);
+  draw(x,6,empty);
+  draw(x+2,6,empty);
+  draw(x,7,empty);
+  draw(x+2,7,empty);
 end;
 
-procedure score(gr:integer);
+procedure score(pl:integer);
 var
   x:integer;
   n:integer;
 begin
-  if gr=1
+  if pl=1
     then textattr:=byte(c1)
     else textattr:=byte(c2);
-  if gr=1
+  if pl=1
     then x:=9
     else x:=SX-10;
   gotoxy(x-2,2);
   outtext('Score');
   textattr:=7;
-  if sco[gr]>99
+  if sco[pl]>99
     then n:=0
-    else if sco[gr]>9
+    else if sco[pl]>9
            then n:=1
            else n:=2;
-  if sco[gr]>99
+  if sco[pl]>99
     then begin
            gotoxy(x,4);
            outtext('1')
          end;
-  if sco[gr]>9
+  if sco[pl]>9
     then begin
            gotoxy(x,5-n);
-           outtext(char(ord('0')+sco[gr] div 10 mod 10))
+           outtext(char(ord('0')+sco[pl] div 10 mod 10))
          end;
   gotoxy(x,6-n);
-  outtext(char(ord('0')+sco[gr] mod 10))
+  outtext(char(ord('0')+sco[pl] mod 10))
 end;
 
-procedure przejedzizapal(gr:integer;kom:string);
-  procedure sprawdz(x,y:integer);
+procedure sweepandmark(pl:integer;msg:string);
+  procedure check(x,y:integer);
   begin
-    if tabl1[x,y]=gr*2-1
+    if board1[x,y]=pl*2-1
       then begin
-             poloznastos(x,y);
-             tabl1[x,y]:=gr*2
+             pushstack(x,y);
+             board1[x,y]:=pl*2
            end
   end;
 begin
-  tabl1:=tabl;
+  board1:=board;
   for x:=1 to 14
     do for y:=1 to 14
-         do if tabl1[x,y]=gr*2
-              then tabl1[x,y]:=gr*2-1;
-  czyscstos;
-  sprawdz(1,1);
-  sprawdz(1,14);
-  sprawdz(14,1);
-  sprawdz(14,14);
-  while ws1>ws2
+         do if board1[x,y]=pl*2
+              then board1[x,y]:=pl*2-1;
+  clearstack;
+  check(1,1);
+  check(1,14);
+  check(14,1);
+  check(14,14);
+  while sp1>sp2
     do begin
-         inc(ws2);
-         x:=stos[ws2].x;
-         y:=stos[ws2].y;
-         sprawdz(x+1,y);
-         sprawdz(x-1,y);
-         sprawdz(x,y+1);
-         sprawdz(x,y-1)
+         inc(sp2);
+         x:=stack[sp2].x;
+         y:=stack[sp2].y;
+         check(x+1,y);
+         check(x-1,y);
+         check(x,y+1);
+         check(x,y-1)
        end;
-  if not jednakowe
+  if not boardsame
     then begin
-           komunikat(gr,kom);
+           message(pl,msg);
            for x:=1 to 14
              do for y:=1 to 14
-                  do if tabl1[x,y]<>tabl[x,y]
+                  do if board1[x,y]<>board[x,y]
                        then begin
-                              inc(sco[gr]);
-                              score(gr);
-                              delay(czas2)
+                              inc(sco[pl]);
+                              score(pl);
+                              delay(delay2)
                             end;
-           tabl:=tabl1;
-           czkom
+           board:=board1;
+           clearmessage
          end;
 end;
 
-procedure completeembrace(gr:integer);
+procedure completeembrace(pl:integer);
 var
   b:boolean;
   x1,y1:integer;
-  procedure sprawdz(x,y:integer);
+  procedure check(x,y:integer);
   begin
-    if tabl1[x,y]=0
+    if board1[x,y]=0
       then begin
-             poloznastos(x,y);
-             tabl1[x,y]:=-1
+             pushstack(x,y);
+             board1[x,y]:=-1
            end
   end;
-  procedure sprawdz1(x,y:integer);
+  procedure check1(x,y:integer);
   begin
-    if tabl1[x,y]=0
+    if board1[x,y]=0
       then begin
-             poloznastos(x,y);
-             tabl1[x,y]:=-2;
-             if (tabl[x-1,y]=gr*2) or
-                  (tabl[x+1,y]=gr*2) or
-                  (tabl[x,y-1]=gr*2) or
-                  (tabl[x,y+1]=gr*2)
+             pushstack(x,y);
+             board1[x,y]:=-2;
+             if (board[x-1,y]=pl*2) or
+                  (board[x+1,y]=pl*2) or
+                  (board[x,y-1]=pl*2) or
+                  (board[x,y+1]=pl*2)
                then b:=true
            end
   end;
 begin
-  tabl1:=tabl;
+  board1:=board;
   for x:=1 to 14
     do for y:=1 to 14
-         do if tabl1[x,y]=gr*2
-              then tabl1[x,y]:=gr*2-1;
+         do if board1[x,y]=pl*2
+              then board1[x,y]:=pl*2-1;
   for x:=1 to 14
     do for y:=1 to 14
-         do if tabl1[x,y]<>gr*2-1
-              then tabl1[x,y]:=0;
-  czyscstos;
-  sprawdz(1,1);
-  sprawdz(1,14);
-  sprawdz(14,1);
-  sprawdz(14,14);
-  while ws1>ws2
+         do if board1[x,y]<>pl*2-1
+              then board1[x,y]:=0;
+  clearstack;
+  check(1,1);
+  check(1,14);
+  check(14,1);
+  check(14,14);
+  while sp1>sp2
     do begin
-         inc(ws2);
-         x:=stos[ws2].x;
-         y:=stos[ws2].y;
-         sprawdz(x+1,y);
-         sprawdz(x-1,y);
-         sprawdz(x,y+1);
-         sprawdz(x,y-1);
-         sprawdz(x+1,y+1);
-         sprawdz(x-1,y-1);
-         sprawdz(x-1,y+1);
-         sprawdz(x+1,y-1)
+         inc(sp2);
+         x:=stack[sp2].x;
+         y:=stack[sp2].y;
+         check(x+1,y);
+         check(x-1,y);
+         check(x,y+1);
+         check(x,y-1);
+         check(x+1,y+1);
+         check(x-1,y-1);
+         check(x-1,y+1);
+         check(x+1,y-1)
        end;
   b:=false;
   for x:=1 to 14
     do for y:=1 to 14
-         do if tabl1[x,y]=0
+         do if board1[x,y]=0
               then begin
                      x1:=x;
                      y1:=y;
@@ -515,100 +511,100 @@ begin
   if b
     then begin
            b:=false;
-           czyscstos;
-           sprawdz1(x1,y1);
-           while ws1>ws2
+           clearstack;
+           check1(x1,y1);
+           while sp1>sp2
              do begin
-                  inc(ws2);
-                  x:=stos[ws2].x;
-                  y:=stos[ws2].y;
-                  sprawdz1(x+1,y);
-                  sprawdz1(x-1,y);
-                  sprawdz1(x,y+1);
-                  sprawdz1(x,y-1)
+                  inc(sp2);
+                  x:=stack[sp2].x;
+                  y:=stack[sp2].y;
+                  check1(x+1,y);
+                  check1(x-1,y);
+                  check1(x,y+1);
+                  check1(x,y-1)
                 end;
-           komunikat(gr,'Complete Embrace');
+           message(pl,'Complete Embrace');
            em:=true;
            for y:=1 to 14
              do for x:=1 to 14
-                  do if tabl1[x,y]=-2
+                  do if board1[x,y]=-2
                        then begin
-                              if tabl[x,y]=0
-                                then dec(polaw);
-                               if b
+                              if board[x,y]=0
+                                then dec(freesq);
+                              if b
                                 then begin
-                                       inc(sco[gr]);
-                                       score(gr);
-                                       tabl[x,y]:=gr*2
+                                       inc(sco[pl]);
+                                       score(pl);
+                                       board[x,y]:=pl*2
                                      end
-                                else tabl[x,y]:=gr*2-1;
-                              anim(x,y,gr)
+                                else board[x,y]:=pl*2-1;
+                              anim(x,y,pl)
                             end;
-           przejedzizapal(gr,'Complete Embrace');
-           czkom
+           sweepandmark(pl,'Complete Embrace');
+           clearmessage
          end;
 end;
 
-procedure anchorembrace(gr:integer);
+procedure anchorembrace(pl:integer);
 var
   b:boolean;
   x1,y1:integer;
-  procedure sprawdz(x,y:integer);
+  procedure check(x,y:integer);
   begin
-    if tabl1[x,y]=-3
+    if board1[x,y]=-3
       then begin
-             poloznastos(x,y);
-             tabl1[x,y]:=-1
+             pushstack(x,y);
+             board1[x,y]:=-1
            end
   end;
-  procedure sprawdz1(x,y:integer);
+  procedure check1(x,y:integer);
   begin
-    if tabl[x,y]=(3-gr)*2
+    if board[x,y]=(3-pl)*2
       then begin
-             poloznastos(x,y);
-             tabl1[x,y]:=-1
+             pushstack(x,y);
+             board1[x,y]:=-1
            end
   end;
-  procedure sprawdz2(x,y:integer);
+  procedure check2(x,y:integer);
   begin
-    if tabl1[x,y]=-3
+    if board1[x,y]=-3
       then begin
-             poloznastos(x,y);
-             tabl1[x,y]:=-2
+             pushstack(x,y);
+             board1[x,y]:=-2
            end
   end;
 begin
-  tabl1:=tabl;
+  board1:=board;
   for x:=1 to 14
     do for y:=1 to 14
-         do if (tabl1[x,y]<>gr*2) and (tabl1[x,y]<>0)
-              then tabl1[x,y]:=-3;
-  czyscstos;
+         do if (board1[x,y]<>pl*2) and (board1[x,y]<>0)
+              then board1[x,y]:=-3;
+  clearstack;
   for y:=1 to 14
     do for x:=1 to 14
-         do if tabl[x,y]=0
+         do if board[x,y]=0
               then begin
-                     poloznastos(x,y);
-                     tabl1[x,y]:=-1
+                     pushstack(x,y);
+                     board1[x,y]:=-1
                    end;
-  sprawdz1(1,1);
-  sprawdz1(1,14);
-  sprawdz1(14,1);
-  sprawdz1(14,14);
-  while ws1>ws2
+  check1(1,1);
+  check1(1,14);
+  check1(14,1);
+  check1(14,14);
+  while sp1>sp2
     do begin
-         inc(ws2);
-         x:=stos[ws2].x;
-         y:=stos[ws2].y;
-         sprawdz(x+1,y);
-         sprawdz(x-1,y);
-         sprawdz(x,y+1);
-         sprawdz(x,y-1)
+         inc(sp2);
+         x:=stack[sp2].x;
+         y:=stack[sp2].y;
+         check(x+1,y);
+         check(x-1,y);
+         check(x,y+1);
+         check(x,y-1)
        end;
   b:=false;
   for y:=1 to 14
     do for x:=1 to 14
-         do if tabl1[x,y]=-3
+         do if board1[x,y]=-3
               then begin
                      x1:=x;
                      y1:=y;
@@ -616,123 +612,123 @@ begin
                    end;
   if b
     then begin
-           czyscstos;
-           sprawdz2(x1,y1);
-           while ws1>ws2
+           clearstack;
+           check2(x1,y1);
+           while sp1>sp2
              do begin
-                  inc(ws2);
-                  x:=stos[ws2].x;
-                  y:=stos[ws2].y;
-                  sprawdz2(x+1,y);
-                  sprawdz2(x-1,y);
-                  sprawdz2(x,y+1);
-                  sprawdz2(x,y-1)
+                  inc(sp2);
+                  x:=stack[sp2].x;
+                  y:=stack[sp2].y;
+                  check2(x+1,y);
+                  check2(x-1,y);
+                  check2(x,y+1);
+                  check2(x,y-1)
                 end;
-           komunikat(gr,'Anchoring Embrace');
+           message(pl,'Anchoring Embrace');
            em:=true;
            for y:=1 to 14
              do for x:=1 to 14
-                  do if tabl1[x,y]=-2
+                  do if board1[x,y]=-2
                        then begin
-                              if tabl[x,y]=0
-                                then dec(polaw);
-                              inc(sco[gr]);
-                              score(gr);
-                              tabl[x,y]:=gr*2;
-                              anim(x,y,gr)
+                              if board[x,y]=0
+                                then dec(freesq);
+                              inc(sco[pl]);
+                              score(pl);
+                              board[x,y]:=pl*2;
+                              anim(x,y,pl)
                             end;
-           przejedzizapal(gr,'Anchoring Embrace');
-           czkom
+           sweepandmark(pl,'Anchoring Embrace');
+           clearmessage
          end;
 end;
 
-procedure ruch(gr:integer);
+procedure playermove(pl:integer);
 label emb;
 begin
-  if polaw<4
-    then ilp:=polaw
-    else ilp:=4;
-  if rczasu=1
-    then czas[gr]:=14;
-  wyswczas(gr);
-  for n:=1 to ilp
+  if freesq<4
+    then numsel:=freesq
+    else numsel:=4;
+  if tl_kind=1
+    then tlimit[pl]:=14;
+  showtime(pl);
+  for n:=1 to numsel
     do begin
          repeat
            x:=random(14)+1;
            y:=random(14)+1;
-         until tabl[x,y]=0;
-         tabl[x,y]:=-1;
-         pola[n].x:=x;
-         pola[n].y:=y
+         until board[x,y]=0;
+         board[x,y]:=-1;
+         selsq[n].x:=x;
+         selsq[n].y:=y
        end;
   n:=1;
-  if ilp>1
+  if numsel>1
     then repeat
-          with pola[n]
-            do czyscpole(x,y);
+          with selsq[n]
+            do clearsquare(x,y);
           inc(n);
-          if n>ilp
+          if n>numsel
             then n:=1;
-          with pola[n]
-            do pisznapolu(x,y,polew[gr]);
-          delay(czas1);
-         until bylklawisz(true,gr);
-  for m:=1 to ilp
-    do with pola[m]
-         do tabl[x,y]:=0;
-  x:=pola[n].x;
-  y:=pola[n].y;
-  if (tabl[x+1,y]=0) or
-     (tabl[x-1,y]=0) or
-     (tabl[x,y+1]=0) or
-     (tabl[x,y-1]=0)
+          with selsq[n]
+            do drawsquare(x,y,sqs[pl]);
+          delay(delay1);
+         until waskey(true,pl);
+  for m:=1 to numsel
+    do with selsq[m]
+         do board[x,y]:=0;
+  x:=selsq[n].x;
+  y:=selsq[n].y;
+  if (board[x+1,y]=0) or
+     (board[x-1,y]=0) or
+     (board[x,y+1]=0) or
+     (board[x,y-1]=0)
     then begin
-           if rczasu=1
+           if tl_kind=1
              then begin
-                    czas[gr]:=14;
-                    wyswczas(gr)
+                    tlimit[pl]:=14;
+                    showtime(pl)
                   end;
            n:=random(4);
            repeat
              n:=succ(n) mod 4;
-             pisznapolu(x,y,strzalki[n]);
-             delay(czas1);
-           until bylklawisz(true,gr);
+             drawsquare(x,y,arrows[n]);
+             delay(delay1);
+           until waskey(true,pl);
            m:=n;
            n:=1;
-           if rczasu=1
+           if tl_kind=1
              then begin
-                    czas[gr]:=14;
-                    wyswczas(gr)
+                    tlimit[pl]:=14;
+                    showtime(pl)
                   end;
            repeat
              n:=(n+2) mod 4+1;
-             pisznapolu(x,y,cyfry[n-1]);
-             delay(czas1);
-           until bylklawisz(true,gr)
+             drawsquare(x,y,digits[n-1]);
+             delay(delay1);
+           until waskey(true,pl)
          end
     else m:=0;
-  czyscczas(gr);
-  dl:=n;
+  cleartime(pl);
+  len:=n;
   n:=0;
   repeat
-    tabl[x+n*kierx[m],y+n*kiery[m]]:=gr*2-1;
-    zapelnpole(x+n*kierx[m],y+n*kiery[m],gr);
-    delay(czas4);
-    dec(polaw);
+    board[x+n*dirx[m],y+n*diry[m]]:=pl*2-1;
+    fillsquare(x+n*dirx[m],y+n*diry[m],pl);
+    delay(delay4);
+    dec(freesq);
     inc(n);
-  until (n=dl) or (tabl[x+n*kierx[m],y+n*kiery[m]]>0);
-  przejedzizapal(gr,'Anchoring Chain');
+  until (n=len) or (board[x+n*dirx[m],y+n*diry[m]]>0);
+  sweepandmark(pl,'Anchoring Chain');
 emb:
   em:=false;
-  completeembrace(gr);
-  anchorembrace(3-gr);
-  anchorembrace(gr);
+  completeembrace(pl);
+  anchorembrace(3-pl);
+  anchorembrace(pl);
   if em
     then goto emb;
 end;
 
-procedure fajrant;
+procedure quit;
 begin
   write(#27'[0m'#27'[2J'#27'[0;0f');
   cursorin;
@@ -746,7 +742,7 @@ var
   ch:char;
 const
   min=2;
-  wybory:array[min..24] of string[15]=(
+  choices:array[min..24] of string[15]=(
                        ' EL-IXIR ',
                        ' EL-IXIR ',
                        ' EL-IXIR ',
@@ -770,7 +766,7 @@ const
                        '',
                        'Play game',
                        'Exit to DOS');
-  opcje:set of byte=[16,17,18,23,24];
+  options:set of byte=[16,17,18,23,24];
 begin
   n:=23;
   repeat
@@ -779,27 +775,27 @@ begin
     cursorout;
     for m:=12 to 24
       do begin
-           gotoxy(SX2+2-length(wybory[m]) div 2,m);
-           outtext(wybory[m])
+           gotoxy(SX2+2-length(choices[m]) div 2,m);
+           outtext(choices[m])
          end;
-    if rczasu=0
+    if tl_kind=0
       then gotoxy(SX2+11,18)
-      else gotoxy(SX2+11,rczasu+15);
+      else gotoxy(SX2+11,tl_kind+15);
     outtext('√');
     repeat
       gotoxy(SX2-5,n);
       textattr:=$70;
       outtext('               ');
-      gotoxy(SX2+2-length(wybory[n]) div 2,n);
-      outtext(wybory[n]);
+      gotoxy(SX2+2-length(choices[n]) div 2,n);
+      outtext(choices[n]);
       ch:=readkey;
       gotoxy(SX2-5,n);
       textattr:=$07;
       outtext('               ');
       if n<11
         then textattr:=col[n-2];
-      gotoxy(SX2+2-length(wybory[n]) div 2,n);
-      outtext(wybory[n]);
+      gotoxy(SX2+2-length(choices[n]) div 2,n);
+      outtext(choices[n]);
       case ch of
         #0:begin
              ch:=readkey;
@@ -808,12 +804,12 @@ begin
                      if n>min
                        then dec(n)
                        else n:=24;
-                   until n in opcje;
+                   until n in options;
                #80:repeat
                      if n<24
                        then inc(n)
                        else n:=min
-                   until n in opcje;
+                   until n in options;
               end;
            end;
         #27:begin
@@ -824,27 +820,27 @@ begin
                             if n>min
                               then dec(n)
                               else n:=24;
-                          until n in opcje;
+                          until n in options;
                       'B':repeat
                             if n<24
                               then inc(n)
                               else n:=min
-                          until n in opcje;
+                          until n in options;
                     end;
-                #27:fajrant;
+                #27:quit;
               end;
             end;
-        'q':fajrant;
+        'q':quit;
        end;
     until (ch=#13) or (ch=' ');
     textattr:=7;
     clrscr;
     case n of
-     24:fajrant;
+     24:quit;
      23:break;
-     18:rczasu:=0;
-     17:rczasu:=2;
-     16:rczasu:=1;
+     18:tl_kind:=0;
+     17:tl_kind:=2;
+     16:tl_kind:=1;
     end;
   until false
 end;
@@ -864,14 +860,14 @@ end;
 
 
 begin
-  rczasu:=0;
+  tl_kind:=0;
   InitMouse;
   setsize;
   repeat
     menu;
-    czas[1]:=400;
-    czas[2]:=400;
-    kon:=false;
+    tlimit[1]:=400;
+    tlimit[2]:=400;
+    quitting:=false;
     sco[1]:=0;
     sco[2]:=0;
     cursorout;
@@ -880,34 +876,34 @@ begin
     clrscr;
     for x:=1 to 14
       do for y:=1 to 14
-           do czyscpole(x,y);
-    if rczasu=2
+           do clearsquare(x,y);
+    if tl_kind=2
       then begin
-             wyswczas(1);
-             wyswczas(2)
+             showtime(1);
+             showtime(2)
            end;
     for x:=0 to 15
       do for y:=0 to 15
-           do tabl[x,y]:=127;
+           do board[x,y]:=127;
     for x:=1 to 14
       do for y:=1 to 14
-           do tabl[x,y]:=0;
-    polaw:=196;
+           do board[x,y]:=0;
+    freesq:=196;
     fast:=false;
     repeat
-      komunikat(1,'Press any key');
-      oznaczgracza(1);
-      bylklawisz(false,0);
-      czkom;
-      ruch(1);
-      if kon or (polaw=0) or (sco[1]>98) or (sco[2]>98)
+      message(1,'Press any key');
+      markplayer(1);
+      waskey(false,0);
+      clearmessage;
+      playermove(1);
+      if quitting or (freesq=0) or (sco[1]>98) or (sco[2]>98)
         then break;
-      komunikat(2,'Press any key');
-      oznaczgracza(2);
-      bylklawisz(false,0);
-      czkom;
-      ruch(2);
-    until kon or (polaw=0) or (sco[1]>98) or (sco[2]>98);
-    kunc;
+      message(2,'Press any key');
+      markplayer(2);
+      waskey(false,0);
+      clearmessage;
+      playermove(2);
+    until quitting or (freesq=0) or (sco[1]>98) or (sco[2]>98);
+    showwinner;
   until false
 end.
