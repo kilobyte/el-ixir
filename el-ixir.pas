@@ -57,6 +57,9 @@ var
   stack:array[1..196] of record x,y:byte end;
   sp1,sp2:integer;
   em:boolean;
+  freesq:integer;
+  an:array[1..2] of integer;
+  vx,vy:integer; { virtual cursor's position }
 
 procedure delay(ms:integer);
 begin
@@ -64,10 +67,6 @@ begin
     then exit;
   mycrt.delay(ms);
 end;
-
-
-var
-  vx,vy:integer;
 
 procedure gotoxy(x,y:integer);
 begin
@@ -249,9 +248,6 @@ begin
     else drawsquare(x,y,sqf[pl])
 end;
 
-var
-  freesq:integer;
-  an:array[1..2] of integer;
 
 procedure anim(x,y,pl:integer);
 var
