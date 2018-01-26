@@ -250,9 +250,7 @@ begin
 end;
 
 var
-  len,numsel:integer;
   freesq:integer;
-  selsq:array[1..4] of record x,y:integer end;
   an:array[1..2] of integer;
 
 procedure anim(x,y,pl:integer);
@@ -649,6 +647,8 @@ end;
 procedure playermove(pl:integer);
 label emb;
 var
+  selsq:array[1..4] of record x,y:integer end;
+  numsel,len:integer;
   x,y,n,m:integer;
 begin
   if freesq<4
