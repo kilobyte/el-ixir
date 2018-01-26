@@ -506,41 +506,40 @@ begin
                      y1:=y;
                      b:=true
                    end;
-  if b
-    then begin
-           b:=false;
-           clearstack;
-           check1(x1,y1);
-           while sp1>sp2
-             do begin
-                  inc(sp2);
-                  x:=stack[sp2].x;
-                  y:=stack[sp2].y;
-                  check1(x+1,y);
-                  check1(x-1,y);
-                  check1(x,y+1);
-                  check1(x,y-1)
-                end;
-           message(pl,'Complete Embrace');
-           em:=true;
-           for y:=1 to 14
-             do for x:=1 to 14
-                  do if board1[x,y]=-2
+  if not b
+    then exit;
+  b:=false;
+  clearstack;
+  check1(x1,y1);
+  while sp1>sp2
+    do begin
+         inc(sp2);
+         x:=stack[sp2].x;
+         y:=stack[sp2].y;
+         check1(x+1,y);
+         check1(x-1,y);
+         check1(x,y+1);
+         check1(x,y-1)
+       end;
+  message(pl,'Complete Embrace');
+  em:=true;
+  for y:=1 to 14
+    do for x:=1 to 14
+         do if board1[x,y]=-2
+              then begin
+                     if board[x,y]=0
+                       then dec(freesq);
+                     if b
                        then begin
-                              if board[x,y]=0
-                                then dec(freesq);
-                              if b
-                                then begin
-                                       inc(sco[pl]);
-                                       score(pl);
-                                       board[x,y]:=pl*2
-                                     end
-                                else board[x,y]:=pl*2-1;
-                              anim(x,y,pl)
-                            end;
-           sweepandmark(pl,'Complete Embrace');
-           clearmessage
-         end;
+                             inc(sco[pl]);
+                             score(pl);
+                             board[x,y]:=pl*2
+                            end
+                      else board[x,y]:=pl*2-1;
+                    anim(x,y,pl)
+                  end;
+  sweepandmark(pl,'Complete Embrace');
+  clearmessage
 end;
 
 procedure anchorembrace(pl:integer);
@@ -608,36 +607,35 @@ begin
                      y1:=y;
                      b:=true
                    end;
-  if b
-    then begin
-           clearstack;
-           check2(x1,y1);
-           while sp1>sp2
-             do begin
-                  inc(sp2);
-                  x:=stack[sp2].x;
-                  y:=stack[sp2].y;
-                  check2(x+1,y);
-                  check2(x-1,y);
-                  check2(x,y+1);
-                  check2(x,y-1)
-                end;
-           message(pl,'Anchoring Embrace');
-           em:=true;
-           for y:=1 to 14
-             do for x:=1 to 14
-                  do if board1[x,y]=-2
-                       then begin
-                              if board[x,y]=0
-                                then dec(freesq);
-                              inc(sco[pl]);
-                              score(pl);
-                              board[x,y]:=pl*2;
-                              anim(x,y,pl)
-                            end;
-           sweepandmark(pl,'Anchoring Embrace');
-           clearmessage
-         end;
+  if not b
+    then exit;
+  clearstack;
+  check2(x1,y1);
+  while sp1>sp2
+    do begin
+         inc(sp2);
+         x:=stack[sp2].x;
+         y:=stack[sp2].y;
+         check2(x+1,y);
+         check2(x-1,y);
+         check2(x,y+1);
+         check2(x,y-1)
+       end;
+  message(pl,'Anchoring Embrace');
+  em:=true;
+  for y:=1 to 14
+    do for x:=1 to 14
+         do if board1[x,y]=-2
+              then begin
+                     if board[x,y]=0
+                       then dec(freesq);
+                     inc(sco[pl]);
+                     score(pl);
+                     board[x,y]:=pl*2;
+                     anim(x,y,pl)
+                   end;
+  sweepandmark(pl,'Anchoring Embrace');
+  clearmessage
 end;
 
 procedure playermove(pl:integer);
