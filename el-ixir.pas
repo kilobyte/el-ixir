@@ -54,8 +54,8 @@ var
   sco:array[1..2] of integer;
   screen:tscreen;
   board,board1:array[0..15,0..15] of integer;
-  stack:array[1..196] of record x,y:byte end;
-  sp1,sp2:integer;
+  queue:array[1..196] of record x,y:byte end;
+  qp1,qp2:integer; { queue indices: producer, consumer }
   em:boolean; { just embraced? }
   freesq:integer;
   an:array[1..2] of integer;
@@ -110,17 +110,17 @@ begin
   crtwrite(p[4]);
 end;
 
-procedure clearstack;
+procedure clearqueue;
 begin
-  sp1:=0;
-  sp2:=0
+  qp1:=0;
+  qp2:=0
 end;
 
-procedure pushstack(x,y:integer);
+procedure pushqueue(x,y:integer);
 begin
-  inc(sp1);
-  stack[sp1].x:=x;
-  stack[sp1].y:=y
+  inc(qp1);
+  queue[qp1].x:=x;
+  queue[qp1].y:=y
 end;
 
 procedure showtime(pl:integer);
@@ -399,7 +399,7 @@ procedure sweepandmark(pl:integer;msg:string);
   begin
     if board1[x,y]=pl*2-1
       then begin
-             pushstack(x,y);
+             pushqueue(x,y);
              board1[x,y]:=pl*2
            end
   end;
@@ -411,16 +411,16 @@ begin
     do for y:=1 to 14
          do if board1[x,y]=pl*2
               then board1[x,y]:=pl*2-1;
-  clearstack;
+  clearqueue;
   check(1,1);
   check(1,14);
   check(14,1);
   check(14,14);
-  while sp1>sp2
+  while qp1>qp2
     do begin
-         inc(sp2);
-         x:=stack[sp2].x;
-         y:=stack[sp2].y;
+         inc(qp2);
+         x:=queue[qp2].x;
+         y:=queue[qp2].y;
          check(x+1,y);
          check(x-1,y);
          check(x,y+1);
@@ -449,7 +449,7 @@ var
   begin
     if board1[x,y]=0
       then begin
-             pushstack(x,y);
+             pushqueue(x,y);
              board1[x,y]:=-1
            end
   end;
@@ -457,7 +457,7 @@ var
   begin
     if board1[x,y]=0
       then begin
-             pushstack(x,y);
+             pushqueue(x,y);
              board1[x,y]:=-2;
              if (board[x-1,y]=pl*2) or
                   (board[x+1,y]=pl*2) or
@@ -478,16 +478,16 @@ begin
     do for y:=1 to 14
          do if board1[x,y]<>pl*2-1
               then board1[x,y]:=0;
-  clearstack;
+  clearqueue;
   check(1,1);
   check(1,14);
   check(14,1);
   check(14,14);
-  while sp1>sp2
+  while qp1>qp2
     do begin
-         inc(sp2);
-         x:=stack[sp2].x;
-         y:=stack[sp2].y;
+         inc(qp2);
+         x:=queue[qp2].x;
+         y:=queue[qp2].y;
          check(x+1,y);
          check(x-1,y);
          check(x,y+1);
@@ -509,13 +509,13 @@ begin
   if not b
     then exit;
   b:=false;
-  clearstack;
+  clearqueue;
   check1(x1,y1);
-  while sp1>sp2
+  while qp1>qp2
     do begin
-         inc(sp2);
-         x:=stack[sp2].x;
-         y:=stack[sp2].y;
+         inc(qp2);
+         x:=queue[qp2].x;
+         y:=queue[qp2].y;
          check1(x+1,y);
          check1(x-1,y);
          check1(x,y+1);
@@ -547,7 +547,7 @@ procedure anchorembrace(pl:integer);
   begin
     if board1[x,y]=-3
       then begin
-             pushstack(x,y);
+             pushqueue(x,y);
              board1[x,y]:=-1
            end
   end;
@@ -555,7 +555,7 @@ procedure anchorembrace(pl:integer);
   begin
     if board[x,y]=(3-pl)*2
       then begin
-             pushstack(x,y);
+             pushqueue(x,y);
              board1[x,y]:=-1
            end
   end;
@@ -563,7 +563,7 @@ procedure anchorembrace(pl:integer);
   begin
     if board1[x,y]=-3
       then begin
-             pushstack(x,y);
+             pushqueue(x,y);
              board1[x,y]:=-2
            end
   end;
@@ -576,23 +576,23 @@ begin
     do for y:=1 to 14
          do if (board1[x,y]<>pl*2) and (board1[x,y]<>0)
               then board1[x,y]:=-3;
-  clearstack;
+  clearqueue;
   for y:=1 to 14
     do for x:=1 to 14
          do if board[x,y]=0
               then begin
-                     pushstack(x,y);
+                     pushqueue(x,y);
                      board1[x,y]:=-1
                    end;
   check1(1,1);
   check1(1,14);
   check1(14,1);
   check1(14,14);
-  while sp1>sp2
+  while qp1>qp2
     do begin
-         inc(sp2);
-         x:=stack[sp2].x;
-         y:=stack[sp2].y;
+         inc(qp2);
+         x:=queue[qp2].x;
+         y:=queue[qp2].y;
          check(x+1,y);
          check(x-1,y);
          check(x,y+1);
@@ -609,13 +609,13 @@ begin
                    end;
   if not b
     then exit;
-  clearstack;
+  clearqueue;
   check2(x1,y1);
-  while sp1>sp2
+  while qp1>qp2
     do begin
-         inc(sp2);
-         x:=stack[sp2].x;
-         y:=stack[sp2].y;
+         inc(qp2);
+         x:=queue[qp2].x;
+         y:=queue[qp2].y;
          check2(x+1,y);
          check2(x-1,y);
          check2(x,y+1);
