@@ -56,7 +56,7 @@ var
   board,board1:array[0..15,0..15] of integer;
   stack:array[1..196] of record x,y:byte end;
   sp1,sp2:integer;
-  em:boolean;
+  em:boolean; { just embraced? }
   freesq:integer;
   an:array[1..2] of integer;
   vx,vy:integer; { virtual cursor's position }
