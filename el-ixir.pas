@@ -250,8 +250,7 @@ begin
 end;
 
 var
-  x,y:integer;
-  len,m,n,numsel:integer;
+  len,numsel:integer;
   freesq:integer;
   selsq:array[1..4] of record x,y:integer end;
   an:array[1..2] of integer;
@@ -306,6 +305,8 @@ begin
 end;
 
 function boardsame:boolean;
+var
+  x,y:integer;
 begin
   for x:=1 to 14
     do for y:=1 to 14
@@ -408,6 +409,8 @@ procedure sweepandmark(pl:integer;msg:string);
              board1[x,y]:=pl*2
            end
   end;
+var
+  x,y:integer;
 begin
   board1:=board;
   for x:=1 to 14
@@ -448,7 +451,6 @@ end;
 procedure completeembrace(pl:integer);
 var
   b:boolean;
-  x1,y1:integer;
   procedure check(x,y:integer);
   begin
     if board1[x,y]=0
@@ -470,6 +472,8 @@ var
                then b:=true
            end
   end;
+var
+  x,y,x1,y1:integer;
 begin
   board1:=board;
   for x:=1 to 14
@@ -546,9 +550,6 @@ begin
 end;
 
 procedure anchorembrace(pl:integer);
-var
-  b:boolean;
-  x1,y1:integer;
   procedure check(x,y:integer);
   begin
     if board1[x,y]=-3
@@ -573,6 +574,9 @@ var
              board1[x,y]:=-2
            end
   end;
+var
+  b:boolean;
+  x,y,x1,y1:integer;
 begin
   board1:=board;
   for x:=1 to 14
@@ -644,6 +648,8 @@ end;
 
 procedure playermove(pl:integer);
 label emb;
+var
+  x,y,n,m:integer;
 begin
   if freesq<4
     then numsel:=freesq
@@ -859,6 +865,8 @@ begin
 end;
 
 
+var
+  x,y:integer;
 begin
   tl_kind:=0;
   InitMouse;
