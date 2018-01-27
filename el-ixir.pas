@@ -885,8 +885,9 @@ begin
              showtime(2)
            end;
     for x:=0 to 15
-      do for y:=0 to 15
-           do board[x,y]:=127;
+      do begin board[x,0]:=127; board[x,15]:=127 end;
+    for y:=1 to 14
+      do begin board[0,y]:=127; board[15,y]:=127 end;
     for x:=1 to 14
       do for y:=1 to 14
            do board[x,y]:=0;
