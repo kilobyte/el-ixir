@@ -45,7 +45,6 @@ const
     ((' ',c1 ,'•',c1 ,' ',c1 ), (' ',c2 ,'•',c2 ,' ',c2 ));
   sqcf:array[1..2] of tsquare=
     ((' ',c1 ,'Ω',c1 ,' ',c1 ), (' ',c2 ,'Ω',c2 ,' ',c2 ));
-  col:array[1..2] of byte=(ord(c1),ord(c2));
 var
   quitting:boolean;
   fast:boolean;
@@ -792,8 +791,6 @@ begin
       gotoxy(SX2-5,n);
       textattr:=$07;
       outtext('               ');
-      if n<11
-        then textattr:=col[n-2];
       gotoxy(SX2+2-length(choices[n]) div 2,n);
       outtext(choices[n]);
       case ch of
