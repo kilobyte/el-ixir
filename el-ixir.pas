@@ -740,16 +740,8 @@ var
   m,n:integer;
   ch:char;
 const
-  min=2;
+  min=10;
   choices:array[min..24] of string[15]=(
-                       ' EL-IXIR ',
-                       ' EL-IXIR ',
-                       ' EL-IXIR ',
-                       ' EL-IXIR ',
-                       ' EL-IXIR ',
-                       ' EL-IXIR ',
-                       ' EL-IXIR ',
-                       ' EL-IXIR ',
                        ' EL-IXIR ',
                        '',
                        '',
@@ -772,8 +764,11 @@ begin
     textattr:=7;
     clrscr;
     cursorout;
-    for m:=12 to 24
+    for m:=min to 24
       do begin
+           if m=min
+             then textattr:=$5e
+             else textattr:=7;
            gotoxy(SX2+2-length(choices[m]) div 2,m);
            outtext(choices[m])
          end;
