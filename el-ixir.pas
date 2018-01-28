@@ -204,8 +204,6 @@ begin
                     quitting:=true;
                     fast:=true
                   end;
-           if ch=#9
-             then fast:=true;
            waskey:=true
          end
     else if (GetMouseButtons and 1)<>0
