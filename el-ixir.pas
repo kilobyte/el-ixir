@@ -661,14 +661,14 @@ begin
   n:=1;
   if numsel>1
     then repeat
-          with selsq[n]
-            do clearsquare(x,y);
-          inc(n);
-          if n>numsel
-            then n:=1;
-          with selsq[n]
-            do drawsquare(x,y,sqs[pl]);
-          delay(delay1);
+           with selsq[n]
+             do clearsquare(x,y);
+           inc(n);
+           if n>numsel
+             then n:=1;
+           with selsq[n]
+             do drawsquare(x,y,sqs[pl]);
+           delay(delay1);
          until waskey(true,pl);
   for m:=1 to numsel
     do with selsq[m]
