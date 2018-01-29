@@ -48,7 +48,7 @@ const
 var
   quitting:boolean;
   fast:boolean;
-  tl_kind:integer;
+  tl_kind:(TL_NONE,TL_MOVE,TL_GAME);
   tlimit:array[1..2] of integer;
   sco:array[1..2] of integer;
   screen:tscreen;
@@ -128,26 +128,26 @@ var
   txt:string[20];
 begin
   case tl_kind of
-   1:begin
-       textattr:=$70;
-       if pl=1
-         then m:=tlmx
-         else m:=SX-tlmx-wtl*14;
-       for n:=1 to 14
-         do draw(m-wtl+n*wtl,tlmy,timem)
-     end;
-   2:begin
-       textattr:=7;
-       if pl=1
-         then gotoxy(tlgx1+1,tlgy)
-         else gotoxy(SX-tlgx1-5+1,tlgy);
-       outtext('Time:');
-       if pl=1
-         then gotoxy(tlgx1+2,     tlgy+2)
-         else gotoxy(SX-tlgx1-5+2,tlgy+2);
-       str(tlimit[pl]:3, txt);
-       outtext(txt)
-     end;
+    TL_MOVE:begin
+              textattr:=$70;
+              if pl=1
+                then m:=tlmx
+                else m:=SX-tlmx-wtl*14;
+              for n:=1 to 14
+                 do draw(m-wtl+n*wtl,tlmy,timem)
+            end;
+    TL_GAME:begin
+              textattr:=7;
+              if pl=1
+                then gotoxy(tlgx1+1,tlgy)
+                else gotoxy(SX-tlgx1-5+1,tlgy);
+              outtext('Time:');
+              if pl=1
+                then gotoxy(tlgx1+2,     tlgy+2)
+                else gotoxy(SX-tlgx1-5+2,tlgy+2);
+              str(tlimit[pl]:3, txt);
+              outtext(txt)
+            end;
   end;
 end;
 
@@ -156,20 +156,20 @@ var
   txt:string[20];
 begin
   case tl_kind of
-   1:begin
-       textattr:=$70;
-       if pl=1
-         then draw(tlmx+tlimit[pl]*wtl,tlmy,empty)
-         else draw(SX-tlmx-wtl-tlimit[pl]*wtl,tlmy,empty)
-     end;
-   2:begin
-       textattr:=7;
-       if pl=1
-         then gotoxy(tlgx1+2,     tlgy+2)
-         else gotoxy(SX-tlgx1-5+2,tlgy+2);
-       str(tlimit[pl]:3, txt);
-       outtext(txt)
-    end;
+    TL_MOVE:begin
+              textattr:=$70;
+              if pl=1
+                then draw(tlmx+tlimit[pl]*wtl,tlmy,empty)
+                else draw(SX-tlmx-wtl-tlimit[pl]*wtl,tlmy,empty)
+            end;
+    TL_GAME:begin
+              textattr:=7;
+              if pl=1
+                then gotoxy(tlgx1+2,     tlgy+2)
+                else gotoxy(SX-tlgx1-5+2,tlgy+2);
+              str(tlimit[pl]:3, txt);
+              outtext(txt)
+            end;
   end;
 end;
 
@@ -178,14 +178,14 @@ var
   m,n:integer;
 begin
   case tl_kind of
-    1:begin
-        textattr:=$70;
-        if pl=1
-          then m:=tlmx
-          else m:=SX-tlmx-wtl*14;
-        for n:=1 to 14
-          do draw(m-wtl+n*wtl,tlmy,empty)
-      end;
+    TL_MOVE:begin
+              textattr:=$70;
+              if pl=1
+                then m:=tlmx
+                else m:=SX-tlmx-wtl*14;
+              for n:=1 to 14
+                do draw(m-wtl+n*wtl,tlmy,empty)
+            end;
    end;
 end;
 
@@ -208,7 +208,7 @@ begin
          end
   else if (GetMouseButtons and 1)<>0
          then waskey:=true
-  else if timed and (tl_kind>0)
+  else if timed and (tl_kind<>TL_NONE)
          then begin
                dec(tlimit[pl]);
                if tlimit[pl]<0
@@ -645,7 +645,7 @@ begin
   if freesq<4
     then numsel:=freesq
     else numsel:=4;
-  if tl_kind=1
+  if tl_kind=TL_MOVE
     then tlimit[pl]:=14;
   showtime(pl);
   for n:=1 to numsel
@@ -680,7 +680,7 @@ begin
      (board[x,y+1]=0) or
      (board[x,y-1]=0)
     then begin
-           if tl_kind=1
+           if tl_kind=TL_MOVE
              then begin
                     tlimit[pl]:=14;
                     showtime(pl)
@@ -693,7 +693,7 @@ begin
            until waskey(true,pl);
            m:=n;
            n:=1;
-           if tl_kind=1
+           if tl_kind=TL_MOVE
              then begin
                     tlimit[pl]:=14;
                     showtime(pl)
@@ -770,9 +770,9 @@ begin
            gotoxy(SX2+2-length(choices[m]) div 2,m);
            outtext(choices[m])
          end;
-    if tl_kind=0
+    if tl_kind=TL_NONE
       then gotoxy(SX2+11,18)
-      else gotoxy(SX2+11,tl_kind+15);
+      else gotoxy(SX2+11,integer(tl_kind)+15);
     outtext('√');
     repeat
       gotoxy(SX2-5,n);
@@ -828,9 +828,9 @@ begin
     case n of
      24:quit;
      23:break;
-     18:tl_kind:=0;
-     17:tl_kind:=2;
-     16:tl_kind:=1;
+     18:tl_kind:=TL_NONE;
+     17:tl_kind:=TL_GAME;
+     16:tl_kind:=TL_MOVE;
     end;
   until false
 end;
@@ -852,7 +852,7 @@ end;
 var
   x,y:integer;
 begin
-  tl_kind:=0;
+  tl_kind:=TL_NONE;
   InitMouse;
   setsize;
   repeat
@@ -869,7 +869,7 @@ begin
     for x:=1 to 14
       do for y:=1 to 14
            do clearsquare(x,y);
-    if tl_kind=2
+    if tl_kind=TL_GAME
       then begin
              showtime(1);
              showtime(2)
