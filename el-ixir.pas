@@ -206,22 +206,22 @@ begin
                   end;
            waskey:=true
          end
-    else if (GetMouseButtons and 1)<>0
-           then waskey:=true
-           else if timed and (tl_kind>0)
-                  then begin
-                         dec(tlimit[pl]);
-                         if tlimit[pl]<0
-                           then begin
-                                  tlimit[pl]:=0;
-                                  waskey:=true
-                                end
-                           else begin
-                                  showdectime(pl);
-                                  waskey:=false
-                                end
-                       end
-                  else waskey:=false
+  else if (GetMouseButtons and 1)<>0
+         then waskey:=true
+  else if timed and (tl_kind>0)
+         then begin
+               dec(tlimit[pl]);
+               if tlimit[pl]<0
+                 then begin
+                        tlimit[pl]:=0;
+                        waskey:=true
+                      end
+                 else begin
+                        showdectime(pl);
+                        waskey:=false
+                      end
+              end
+  else waskey:=false
 end;
 
 procedure drawsquare(x,y:integer;w:tsquare);
