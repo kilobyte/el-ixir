@@ -1,0 +1,45 @@
+.TH el-ixir 6
+.SH NAME
+el-ixir \- a two-player board game
+.SH DESCRIPTION
+.B El-Ixir
+is a board game with an element of randomness.  It is played by two players
+at the same terminal, although it is possible to use a shared tmux for
+remote play.
+
+The game should be playable on any vt100ish terminal whose character set
+includes a certain subset of glyphs of IBM ROM BIOS, encoded as Unicode.
+Terminals not meeting this requirement should be long extinct.
+.SH RULES
+The object of the game is to connect as many blocks in your colour to the
+corners.  The players take turns, being presented with four random tiles
+each turn.
+.P
+The game is controlled by pressing any key (not \fIShift\fR or
+\fICtrl\fR...); \fIq\fR quits.
+.TP
+.B Moving:
+To make a move, choose one of the four tiles that were rolled for you.
+Next, choose a direction (up, left, right, down) and length (1-4).  If a
+block of that length won't fit, it's silently cut to the longest length
+there's space for.  (Hint: it's almost always beneficial to choose length
+4).
+.TP
+.B Anchoring:
+If the block you placed causes some blocks to be connected to one of the
+corners, you will be credited a point for every tile covered by a block in
+your color that's connected to a corner by an unbroken line (via cardinal
+directions only — diagonals are not enough).
+.TP
+.B Embracing:
+There are two types of embraces:
+.IP \(bu
+complete embrace, when your blocks either completely enclose a part of
+the board or wall it in into a border
+.IP \(bu
+anchored embrace, which trades the requirement of enclosing only parts
+of the board that contain no free tiles for allowing braces that are
+connected only diagonally.  It is possible that a move makes both players
+eligible for an embrace \(em your opponent has priority.
+.PP
+Whichever player gets the most points, wins.
