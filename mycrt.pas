@@ -42,7 +42,7 @@ var
 begin
   tv.tv_sec:=ms div 1000;
   tv.tv_usec:=(ms mod 1000)*1000;
-  SelectText(input, @tv);
+  fpSelect(input, @tv);
 end;
 
 procedure SetAttr;
@@ -67,7 +67,7 @@ end;
 
 function keypressed:boolean;
 begin
-  keypressed:=SelectText(input, 0)<>0;
+  keypressed:=fpSelect(input, 0)<>0;
 end;
 
 function readkey:char;
@@ -80,7 +80,7 @@ end;
 
 procedure waitkey;
 begin
-  SelectText(input, nil);
+  fpSelect(input, nil);
 end;
 
 procedure clrscr;
