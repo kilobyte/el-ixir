@@ -851,6 +851,7 @@ end;
 
 var
   x,y:integer;
+  pl:integer;
 begin
   tl_kind:=TL_NONE;
   InitMouse;
@@ -883,19 +884,14 @@ begin
            do board[x,y]:=0;
     freesq:=196;
     fast:=false;
+    pl:=1;
     repeat
-      message(1,'Press any key');
-      markplayer(1);
+      message(pl,'Press any key');
+      markplayer(pl);
       waskey(false,0);
       clearmessage;
-      playermove(1);
-      if quitting or (freesq=0) or (sco[1]>98) or (sco[2]>98)
-        then break;
-      message(2,'Press any key');
-      markplayer(2);
-      waskey(false,0);
-      clearmessage;
-      playermove(2);
+      playermove(pl);
+      pl:=3-pl;
     until quitting or (freesq=0) or (sco[1]>98) or (sco[2]>98);
     showwinner;
   until false
