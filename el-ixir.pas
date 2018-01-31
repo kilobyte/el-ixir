@@ -636,7 +636,6 @@ begin
 end;
 
 procedure playermove(pl:integer);
-label emb;
 var
   selsq:array[1..4] of record x,y:integer end;
   numsel,len:integer;
@@ -716,13 +715,12 @@ begin
     inc(n);
   until (n=len) or (board[x+n*dirx[m],y+n*diry[m]]>0);
   sweepandmark(pl,'Anchoring Chain');
-emb:
-  em:=false;
-  completeembrace(pl);
-  anchorembrace(3-pl);
-  anchorembrace(pl);
-  if em
-    then goto emb;
+  repeat
+    em:=false;
+    completeembrace(pl);
+    anchorembrace(3-pl);
+    anchorembrace(pl);
+  until not em
 end;
 
 procedure quit;
