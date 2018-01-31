@@ -80,7 +80,7 @@ end;
 
 procedure waitkey;
 begin
-  fpSelect(input, nil);
+  fpSelect(input, $7fffffff); { ~24 days, workaround a bug in fpc }
 end;
 
 procedure clrscr;
