@@ -10,6 +10,8 @@ function keypressed:boolean;
 function readkey:char;
 procedure waitkey;
 procedure clrscr;
+procedure InitCrt;
+procedure DoneCrt;
 
 var
   TextAttr:byte;
@@ -92,7 +94,9 @@ end;
 var
   oldta, curta: TermIOS;
   WinInfo : TWinSize;
-initialization
+
+procedure InitCrt;
+begin
   TextAttr:=7;
   RealAttr:=255;
   TCGetAttr(0, oldta);
@@ -108,10 +112,19 @@ initialization
            if ScreenHeight<=0
              then ScreenHeight:=25;
          end
-    else begin    
+    else begin
            ScreenWidth:=80;    
            ScreenHeight:=25;
-         end; 
-finalization
+         end;
+end;
+
+procedure DoneCrt;
+begin
   TCSetAttr(0, TCSANOW, oldta);
+end;
+
+initialization
+  InitCrt
+finalization
+  DoneCrt
 end.
