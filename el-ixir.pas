@@ -760,7 +760,7 @@ var
   m,n:integer;
   ch:char;
 const
-  min=10;
+  min=11;
   choices:array[min..24] of string[15]=(
                        ' EL-IXIR ',
                        '',
@@ -772,12 +772,11 @@ const
                        'For all game',
                        'No limit',
                        '',
-                       '',
                        'Instructions',
                        '',
                        'Play game',
                        'Exit to DOS');
-  options:set of byte=[16,17,18,21,23,24];
+  options:set of byte=[17,18,19,21,23,24];
 begin
   n:=23;
   repeat
@@ -793,8 +792,8 @@ begin
            outtext(choices[m])
          end;
     if tl_kind=TL_NONE
-      then gotoxy(SX2+11,18)
-      else gotoxy(SX2+11,integer(tl_kind)+15);
+      then gotoxy(SX2+11,19)
+      else gotoxy(SX2+11,integer(tl_kind)+16);
     outtext('√');
     repeat
       gotoxy(SX2-5,n);
@@ -850,9 +849,9 @@ begin
     case n of
      24:quit;
      23:break;
-     18:tl_kind:=TL_NONE;
-     17:tl_kind:=TL_GAME;
-     16:tl_kind:=TL_MOVE;
+     19:tl_kind:=TL_NONE;
+     18:tl_kind:=TL_GAME;
+     17:tl_kind:=TL_MOVE;
      21:instructions;
     end;
   until false
