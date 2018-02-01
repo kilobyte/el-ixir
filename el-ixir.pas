@@ -723,6 +723,18 @@ begin
   until not em
 end;
 
+procedure setsize;
+var
+  i:integer;
+begin
+  SX:=ScreenWidth;
+  SY:=ScreenHeight;
+  SX2:=SX div 2;
+  SetLength(screen, SY+1);
+  for i:=1 to SY
+    do SetLength(screen[i], SX+1);
+end;
+
 procedure quit;
 begin
   write(#27'[0m'#27'[2J'#27'[0;0f');
@@ -740,6 +752,7 @@ begin
   ExecuteProcess('/usr/bin/man', 'el-ixir', []);
   InitCrt;
   InitMouse;
+  setsize
 end;
 
 procedure menu;
@@ -844,20 +857,6 @@ begin
     end;
   until false
 end;
-
-
-procedure setsize;
-var
-  i:integer;
-begin
-  SX:=ScreenWidth;
-  SY:=ScreenHeight;
-  SX2:=SX div 2;
-  SetLength(screen, SY+1);
-  for i:=1 to SY
-    do SetLength(screen[i], SX+1);
-end;
-
 
 var
   x,y:integer;
