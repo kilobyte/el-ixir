@@ -1,4 +1,4 @@
-uses mycrt,Mouse;{$R+}
+uses mycrt,Mouse,SysUtils;{$R+}
 type
   tsquare=array[0..5] of string;
   tscreen=array of array of array[0..1] of string;
@@ -731,6 +731,17 @@ begin
   halt
 end;
 
+procedure instructions;
+begin
+  DoneCrt;
+  DoneMouse;
+  cursorin;
+  write(#27'[0m'#27'[2J'#27'[0;0f');
+  ExecuteProcess('/usr/bin/man', 'el-ixir', []);
+  InitCrt;
+  InitMouse;
+end;
+
 procedure menu;
 var
   m,n:integer;
@@ -749,11 +760,11 @@ const
                        'No limit',
                        '',
                        '',
-                       '',
+                       'Instructions',
                        '',
                        'Play game',
                        'Exit to DOS');
-  options:set of byte=[16,17,18,23,24];
+  options:set of byte=[16,17,18,21,23,24];
 begin
   n:=23;
   repeat
@@ -829,6 +840,7 @@ begin
      18:tl_kind:=TL_NONE;
      17:tl_kind:=TL_GAME;
      16:tl_kind:=TL_MOVE;
+     21:instructions;
     end;
   until false
 end;
