@@ -1,4 +1,4 @@
-uses mycrt,Mouse,SysUtils;{$R+}
+uses mycrt,Mouse,SysUtils;
 type
   tsquare=array[0..5] of string;
   tscreen=array of array of array[0..1] of string;
