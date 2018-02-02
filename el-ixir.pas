@@ -744,12 +744,25 @@ begin
 end;
 
 procedure instructions;
+var
+  f:text;
+  manpath:string;
 begin
   DoneCrt;
   DoneMouse;
   cursorin;
   write(#27'[0m'#27'[2J'#27'[0;0f');
-  if fpSystem(ansistring('/usr/bin/man el-ixir'))<>0
+  {$I-}
+  assign(f, 'el-ixir.6');
+  reset(f);
+  {$I+}
+  if IOResult=0
+    then begin
+           close(f);
+           manpath:='./el-ixir.6'
+         end
+    else manpath:='el-ixir';
+  if fpSystem(ansistring('man '+manpath))<>0
     then begin
            writeln('== Press any key ==');
            readln
