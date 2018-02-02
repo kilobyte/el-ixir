@@ -1,4 +1,4 @@
-uses mycrt,Mouse,SysUtils;
+uses mycrt,Mouse,unix;
 type
   tsquare=array[0..5] of string;
   tscreen=array of array of array[0..1] of string;
@@ -749,7 +749,11 @@ begin
   DoneMouse;
   cursorin;
   write(#27'[0m'#27'[2J'#27'[0;0f');
-  ExecuteProcess('/usr/bin/man', 'el-ixir', []);
+  if fpSystem(ansistring('/usr/bin/man el-ixir'))<>0
+    then begin
+           writeln('== Press any key ==');
+           readln
+         end;
   InitCrt;
   InitMouse;
   setsize
