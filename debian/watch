@@ -1,0 +1,3 @@
+version=2
+opts=filenamemangle=s/.+\/v?(\d\S*)\.tar\.gz/el-ixir-$1\.tar\.gz/ \
+  https://github.com/kilobyte/el-ixir/tags .*/v?(\d\S*)\.tar\.gz

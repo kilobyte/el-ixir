@@ -1,0 +1,2 @@
+# fpc can't make dynamic executables.
+el-ixir binary: statically-linked-binary
