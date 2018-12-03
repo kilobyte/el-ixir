@@ -1,3 +1,10 @@
+el-ixir (3.0-2) unstable; urgency=medium
+
+  * Fix the watch file reporting a spurious new version.
+  * Use https URLs.
+
+ -- Adam Borowski <kilobyte@angband.pl>  Mon, 03 Dec 2018 01:32:13 +0100
+
 el-ixir (3.0-1) unstable; urgency=medium
 
   * Initial release (closes: #889516).
