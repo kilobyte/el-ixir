@@ -1,3 +1,10 @@
+el-ixir (3.0-3) unstable; urgency=medium
+
+  * Bump the watch file version to 4.
+  * dh 13.
+
+ -- Adam Borowski <kilobyte@angband.pl>  Thu, 24 Feb 2022 00:49:11 +0100
+
 el-ixir (3.0-2) unstable; urgency=medium
 
   * Fix the watch file reporting a spurious new version.
