@@ -3,7 +3,7 @@ Section: games
 Priority: optional
 Maintainer: Adam Borowski <kilobyte@angband.pl>
 Build-Depends: debhelper-compat (= 13), fp-compiler
-Standards-Version: 4.6.1
+Standards-Version: 4.6.2
 Homepage: https://github.com/kilobyte/el-ixir
 Vcs-Git: https://github.com/kilobyte/el-ixir -b debian
 Vcs-Browser: https://github.com/kilobyte/el-ixir/tree/debian
